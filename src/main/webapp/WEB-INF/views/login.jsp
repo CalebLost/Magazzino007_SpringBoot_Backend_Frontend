@@ -12,8 +12,8 @@ body
 form 
 {
 margin: 0 auto; 
- width:  40%;
- height: 40%;
+ width:  60%;
+ height: 60%;
 }
 
 input[type=text], input[type=password]
@@ -132,7 +132,11 @@ span.password {
          <p>${role.authority}</p>
        </c:forEach>
          <c:url value="${linklogout}" var = "linklogouturl"></c:url>
+          <c:url value="${linkclienti}" var = "linkclientiurl"></c:url>
+           <c:url value="${linkprodotti}" var = "linkprodottiurl"></c:url>
          <span class="psw"><a href="${linklogouturl}">${labellogout}</a></span>
+         <span class="psw"><a href="${linkclientiurl}">${labelclienti}</a></span>
+         <span class="psw"><a href="${linkprodottiurl}">${labelprodotti}</a></span>
        </div>
       </sec:authorize>
     </c:otherwise>

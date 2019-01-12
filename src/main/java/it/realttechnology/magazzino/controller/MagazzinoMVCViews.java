@@ -8,41 +8,28 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import it.realttechnology.magazzino.configuration.MagazzinoConfigurator;
 import it.realttechnology.magazzino.entity.ClientiEntity;
 import it.realttechnology.magazzino.entity.ClientiEntityForCreate;
 import it.realttechnology.magazzino.entity.ClientiEntityForUpdate;
 import it.realttechnology.magazzino.entity.ProdottiEntity;
-import it.realttechnology.magazzino.entity.VenditeEntity;
-import it.realttechnology.magazzino.repository.VenditeRepository;
 import it.realttechnology.magazzino.security.TokenUtils;
 import it.realttechnology.magazzino.services.ClientiServiceDAOImpl;
 import it.realttechnology.magazzino.services.ProdottiServiceDAOImpl;
@@ -122,6 +109,10 @@ public class MagazzinoMVCViews
 	   model.addAttribute("cancel", "Cancel");
 	   model.addAttribute("linklogout","/views/logout");
 	   model.addAttribute("labellogout","Logout");
+	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/5/0/3");
+	   model.addAttribute("labelprodotti","Prodotti");
+	   model.addAttribute("linkclienti","/views/personale/clienti");
+	   model.addAttribute("labelclienti","Clienti");
 	   return "login";
 	}
 
@@ -402,6 +393,20 @@ public class MagazzinoMVCViews
 		 int pagine = (int) Math.ceil(((double)num / columns));
 		 
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,"/views/personale/prodotti/p/{row}/"+columns);
+		 
+		 model.addAttribute("prodotti", prodotti);	
+	 	 return "prodottiView";	  
+	 }
+
+	 @GetMapping(value = "/personale/prodotti/p/{row}/{columns}/{win}/{wins}")
+	 public String  findAllProductsWithoutVenditePaging(Model model,@PathVariable("row") int row,@PathVariable("win") int win,@PathVariable("wins") int wins,@PathVariable("columns") int columns) 
+	 {   	
+		 int num = (int)((long)prodottiService.count());
+		 List<ProdottiEntity> prodotti = (List<ProdottiEntity>) prodottiService.findAllWithoutForeigns(row,columns);
+		 int pagine = (int) Math.ceil(((double)num / columns));
+
+		 
+		 addProdottiModelGridLabels(model, row, columns, num, pagine, win,wins,ViewType.VIEW_PRODOTTI,"/views/personale/prodotti/p/{row}/"+columns+"/{win}/"+wins);
 		 
 		 model.addAttribute("prodotti", prodotti);	
 	 	 return "prodottiView";	  
