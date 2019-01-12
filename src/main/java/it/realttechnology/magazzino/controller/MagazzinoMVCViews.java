@@ -51,6 +51,15 @@ import it.realttechnology.magazzino.services.VenditeServiceDAOImpl;
 
 
 @Controller
+class IndexController
+{
+    @RequestMapping("/")
+    public String index() {
+        return "redirect:views/login";
+    }
+}
+
+@Controller
 @RequestMapping("/views")
 public class MagazzinoMVCViews
 {
