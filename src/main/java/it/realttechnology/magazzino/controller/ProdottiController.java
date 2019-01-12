@@ -1,5 +1,6 @@
 package it.realttechnology.magazzino.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +71,8 @@ public class ProdottiController
 	 @ResponseBody
 	 public Iterable<ProdottiEntity> findAllWithoutVendite()
 	 {
-		 return prodottiService.findAllWithoutForeigns();
+		// return new ArrayList<ProdottiEntity>();
+		return prodottiService.findAllWithoutForeigns();
 	 }
 	
      @RequestMapping(value = "/n={name}", method = RequestMethod.GET)

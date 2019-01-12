@@ -11,4 +11,6 @@ public interface UsersAuthenticationService
    PersonaleEntity loginToken(String token) throws UsernameNotFoundException;
    void logout(String token) throws UsernameNotFoundException;
    void setUserToken(String username, String token) throws UsernameNotFoundException;
+   String getUserToken(String userName) throws UsernameNotFoundException;
+   
 }

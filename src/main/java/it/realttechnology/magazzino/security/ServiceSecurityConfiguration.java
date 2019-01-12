@@ -37,12 +37,11 @@ private UsersAuthenticationService userAuthenticationService;
 	    	 http.antMatcher("/services/**")
 	    	 
 	    	 .cors().and().csrf().disable().authorizeRequests()
-	    	.antMatchers("/services/logout").authenticated()
-
-            .antMatchers("/services/prodotti/**").permitAll()
+	    	
+            .antMatchers("/services/prodotti/**").hasRole("USER")
+	    	.antMatchers("/services/vendite/**").hasRole("ADMIN")
+            .antMatchers("/services/personale/**").hasRole("ADMIN")
             
-	    	.antMatchers("/services/vendite/**").permitAll()
-            .antMatchers("/services/personale/**").hasRole("USER")
             .anyRequest().authenticated()
 	
 	        .and()
@@ -72,5 +71,5 @@ private UsersAuthenticationService userAuthenticationService;
 	        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
 	    }
 
-	    
+	 
 }

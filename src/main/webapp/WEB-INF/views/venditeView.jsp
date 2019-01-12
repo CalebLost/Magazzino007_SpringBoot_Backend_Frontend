@@ -14,7 +14,7 @@
 <c:url var="tableurl" value="/resources/DataTables/" />
 <c:url var="commonurl" value="/resources/commonjs/" />
 <c:url var="jqueryurl" value="/resources/table/vendor/jquery/" />
-<c:url var="venditeservice" value="${venditeService}" />
+<c:url var="venditeserviceurl" value="${venditeservice}" />
 <link rel="stylesheet" type="text/css" href="${tableurl}datatables.min.css"/>
 
 <script type="text/javascript" language="javascript" src="${jqueryurl}jquery-3.2.1.min.js"></script>
@@ -24,6 +24,7 @@
 <script type="text/javascript" src="${commonurl}moment.js"></script>
 <script type="text/javascript" class="init">
 	
+var venditeCurrency = "<c:out value="${venditeservicecurrency}" escapeXml="false"></c:out>";
 
 $(document).ready(function()
 		{
@@ -31,8 +32,21 @@ $(document).ready(function()
 	
 	(
 			{
-				'sAjaxSource'   :  "<c:out value="${venditeservice}"></c:out>",
+				'sAjaxSource'   :  "<c:out value="${venditeserviceurl}"></c:out>",
 				'sAjaxDataProp' : "",
+				"fnServerData": function ( sSource, aoData, fnCallback, oSettings ) {
+				     oSettings.jqXHR = $.ajax( {
+				       "dataType": 'json',
+				       "type": "GET",
+				       "headers" : {"<c:out value="${venditeserviceauthtokenheader}"></c:out>" : "<c:out value="${venditeserviceauthtokenvalue}"></c:out>"},
+				       "url": sSource,
+				       "data": aoData,
+				       "success": fnCallback,
+				       "error": function (e) {
+				           console.log(e.message);
+				       }
+				     })
+				},
 				"order"         : [[0,"asc"]],
 				"aoColumns"     : 
 					[
@@ -46,7 +60,7 @@ $(document).ready(function()
 								 {
 					                    return a;
 					            }
-							     return accounting.formatMoney(a, "&euro;", 2, ".", ",");
+							     return accounting.formatMoney(a, venditeCurrency, <c:out value="${venditeservicecurrencyprecision}"></c:out>,"<c:out value="${venditeservicecurrencyseparator1}"></c:out>", "<c:out value="${venditeservicecurrencyseparator2}"></c:out>");
 							   }
 						},
 						{ "mData"   : "quantita"},
@@ -57,7 +71,7 @@ $(document).ready(function()
 							    {
 				                   return a;
 				                }
-							     return moment(a).format("YYYY-MM-DD HH:mm:ss");
+							     return moment(a).format("<c:out value="${venditeservicetimeformatter}"></c:out>");
 						   }
 						 
 						}

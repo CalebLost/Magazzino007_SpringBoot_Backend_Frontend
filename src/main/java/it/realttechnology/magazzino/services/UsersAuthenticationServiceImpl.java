@@ -64,7 +64,7 @@ public class UsersAuthenticationServiceImpl implements UsersAuthenticationServic
 	@Override
 	public void setUserToken(String username, String token) throws UsernameNotFoundException
 	{
-		Optional<PersonaleEntity> usersEntity = usersDAOServiceImpl.findByToken(token);
+		Optional<PersonaleEntity> usersEntity = usersDAOServiceImpl.findByUsername(username);
 			
 			if (!usersEntity.isPresent())
 			{
@@ -74,6 +74,19 @@ public class UsersAuthenticationServiceImpl implements UsersAuthenticationServic
 			usersEntity.get().setToken(token);
 	        
 	        usersDAOServiceImpl.update(usersEntity.get());
+	}
+	
+	@Override
+	public String getUserToken(String username) throws UsernameNotFoundException
+	{
+		Optional<PersonaleEntity> usersEntity = usersDAOServiceImpl.findByUsername(username);
+			
+			if (!usersEntity.isPresent())
+			{
+				throw new UsernameNotFoundException(username);
+			}
+			
+			return usersEntity.get().getToken();
 	}
 
 }

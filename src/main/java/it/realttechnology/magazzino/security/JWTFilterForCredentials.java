@@ -60,8 +60,7 @@ public class JWTFilterForCredentials extends AbstractAuthenticationProcessingFil
                                                 HttpServletResponse res
                                                ) 
     {
-    	// Do authentication
-    	
+    
         try
         {
         	//OGGETTO SERIALIZZATO NELLA RICHIESTA
@@ -72,7 +71,7 @@ public class JWTFilterForCredentials extends AbstractAuthenticationProcessingFil
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             creds.getUsername(),
-                            creds.getPassword(),
+                            creds.getUsername().startsWith(TokenUtils.TOKEN_PREFIX) ? TokenUtils.TOKEN_AUTH_PWD : creds.getPassword(),
                             Collections.emptyList())
             );
             
@@ -93,14 +92,23 @@ public class JWTFilterForCredentials extends AbstractAuthenticationProcessingFil
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException 
     {
+
+    	String username = auth.getName();
+    	
+    	if(username.startsWith(TokenUtils.TOKEN_PREFIX))
+    	{
+    		username = TokenUtils.getUserFromToken(auth.getName().replace(TokenUtils.TOKEN_PREFIX, ""));
+    		LoggerFactory.getLogger(JWTFilterForCredentials.class).info("User " + username + " logged from previous token");
+
+    	}
+
+    	LoggerFactory.getLogger(JWTFilterForCredentials.class).info("User " + username + " request new token");
+
+    	
     	// Add Bearer token to header
-        String token = JWT.create()
-                .withSubject(((User) auth.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + TokenProperties.EXPIRATION_TIME))
-                .sign(HMAC512(TokenProperties.SECRET.getBytes()));
+        String token = TokenUtils.generateToken(username);
         
         //append the authorization header to the request header
-        String username = auth.getName();
         LoggerFactory.getLogger(JWTFilterForCredentials.class).info("User " + username + " authenticated with token " +  token);
         
         
@@ -109,8 +117,8 @@ public class JWTFilterForCredentials extends AbstractAuthenticationProcessingFil
         {
           authenticationService.setUserToken(username,token);
 
-          String wellFormattedToken = TokenProperties.TOKEN_PREFIX + token;
-          res.setHeader(TokenProperties.HEADER_STRING,wellFormattedToken);
+          String wellFormattedToken = TokenUtils.TOKEN_PREFIX + token;
+          res.setHeader(TokenUtils.HEADER_STRING,wellFormattedToken);
           //doing this the caller can auto handle the output
           res.setContentType("application/json");
           new ObjectMapper().writeValue(res.getOutputStream(), new LoginResponse(wellFormattedToken));
@@ -125,4 +133,6 @@ public class JWTFilterForCredentials extends AbstractAuthenticationProcessingFil
         
         }
     }
+
+	
 }

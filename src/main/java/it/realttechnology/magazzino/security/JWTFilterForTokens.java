@@ -42,12 +42,12 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
     	
     	//1) GET THE HEADER
     	
-        String header = request.getHeader(TokenProperties.HEADER_STRING);
+        String header = request.getHeader(TokenUtils.HEADER_STRING);
         
         LoggerFactory.getLogger(JWTFilterForTokens.class).info("PROCESSING TOKEN,HEADER :" + header);
         
         //2)IF THE HEADER IS NOT RECOGNIZED AS A VALID TOKEN HEADER GO ON PROCESSING THE FILTERS CHIAN
-        if(header == null || !header.startsWith(TokenProperties.TOKEN_PREFIX))
+        if(header == null || !header.startsWith(TokenUtils.TOKEN_PREFIX))
         {
             LoggerFactory.getLogger(JWTFilterForTokens.class).info("WRONG HEADER , GO ON");
             
@@ -69,14 +69,7 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
           try
           {
         	//DECODE THE TOKEN
-            DecodedJWT token = JWT.require(Algorithm.HMAC512(TokenProperties.SECRET.getBytes()))
-                    .build()
-                    .verify(header.replace(TokenProperties.TOKEN_PREFIX, ""));
-            
-            LoggerFactory.getLogger(JWTFilterForTokens.class).info("DECODED TOKEN: " + token.getToken());
-            
-            //GET WHAT I NEED FROM THE TOKEN
-            String userName = token.getSubject();
+            String userName = TokenUtils.getUserFromToken(header);
             
             LoggerFactory.getLogger(JWTFilterForTokens.class).info(userName);
             //EXTRACT DETAILED INFO FOR THE USER WITH THE GIVEN TOKEN
@@ -93,7 +86,7 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
                         new UsernamePasswordAuthenticationToken
                         (
                         		header,
-                        		TokenProperties.TOKEN_AUTH_PWD,
+                        		TokenUtils.TOKEN_AUTH_PWD,
                                 Collections.emptyList()
                         )
                         
@@ -113,4 +106,5 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
           
     
     }
+	
 }

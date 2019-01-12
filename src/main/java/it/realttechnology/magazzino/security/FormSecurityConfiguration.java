@@ -11,9 +11,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import it.realttechnology.magazzino.services.UserDetailsAuthenticationServiceImpl;
+import it.realttechnology.magazzino.services.UsersAuthenticationService;
 
 
 @Configuration
@@ -28,6 +32,8 @@ public class FormSecurityConfiguration extends WebSecurityConfigurerAdapter
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private UserDetailsService userDetailsService;
+	@Autowired
+	private UsersAuthenticationService userAuthenticationService;
 	@Override
 	public void configure(HttpSecurity http) throws Exception
 	{
@@ -43,8 +49,16 @@ public class FormSecurityConfiguration extends WebSecurityConfigurerAdapter
 	  .anyRequest().authenticated()
 	  .and()
 	  .formLogin()
+	  .successHandler(tokenGeneratorSuccessHandler("/views/login"))
 	  .loginPage("/views/login")
-	  .permitAll();
+	  .permitAll()
+	  .failureUrl("/views/login?error=true")
+      .and()
+      .rememberMe().key("uniqueAndSecret")
+      .and() 
+      .logout().logoutRequestMatcher(new AntPathRequestMatcher("/views/logout"))
+      .addLogoutHandler(tokenDeleterLogoutHandler()).logoutSuccessUrl("/views/login");
+		//.invalidateHttpSession(true).deleteCookies("JSESSIONID").
 	   //multiple form urls for different paths
 	  // .exceptionHandling()
       // .defaultAuthenticationEntryPointFor(
@@ -61,6 +75,15 @@ public class FormSecurityConfiguration extends WebSecurityConfigurerAdapter
 	{
 	     auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
 	}
-	
+	@Bean
+	AuthenticationSuccessHandler tokenGeneratorSuccessHandler(String redirectUrl)
+	{
+		return new TokenGeneratorSuccessHandler(redirectUrl,this.userAuthenticationService);
+	}
+	@Bean
+	LogoutHandler tokenDeleterLogoutHandler()
+	{
+		return new TokenDeleterLogoutHandler(this.userAuthenticationService);
+	}
 
 }

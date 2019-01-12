@@ -1,6 +1,7 @@
 package it.realttechnology.magazzino.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -41,8 +43,10 @@ import it.realttechnology.magazzino.entity.ClientiEntityForUpdate;
 import it.realttechnology.magazzino.entity.ProdottiEntity;
 import it.realttechnology.magazzino.entity.VenditeEntity;
 import it.realttechnology.magazzino.repository.VenditeRepository;
+import it.realttechnology.magazzino.security.TokenUtils;
 import it.realttechnology.magazzino.services.ClientiServiceDAOImpl;
 import it.realttechnology.magazzino.services.ProdottiServiceDAOImpl;
+import it.realttechnology.magazzino.services.UsersAuthenticationService;
 import it.realttechnology.magazzino.services.VenditeServiceDAOImpl;
 
 
@@ -62,15 +66,25 @@ public class MagazzinoMVCViews
 	@Autowired
 	ClientiServiceDAOImpl clientiService;
 	@Autowired
+	UsersAuthenticationService userAuthenticationService;
+	@Autowired
 	ServletContext context; 
 	
 	@Autowired
 	MagazzinoConfigurator configurator;
 	
+	@Value("${login.avatar}")
+	private String loginAvatar;
+	@Value("${views.datatables.language}")
+	private String viewsDataTablesLanguage;
+	
+	private static final boolean USE_CONFIG;
+	
 	private static final String TABLE_LANG;
 	
 	static
 	{
+		USE_CONFIG = true;
 		TABLE_LANG = "it_IT";
 		
 	}
@@ -79,92 +93,106 @@ public class MagazzinoMVCViews
 	@PostConstruct
 	private void initInjection()
 	{
-		MVCUtils.setConfig(configurator);
+		MVCUtils.setConfig(configurator, USE_CONFIG ? viewsDataTablesLanguage : TABLE_LANG);
 	}
 	
 	@GetMapping("/login")
 	//DOES FORWARD ON REQUESTS
-	
 	//when operating with jsp view is possible to interact with the datamodel passing it as parameter and populating it
 	public String login(Model model, @RequestParam(value="message", required=false, defaultValue="Login") String message)
 	{
 	   model.addAttribute("message", message);
+	   model.addAttribute("avatar", loginAvatar);
+	   model.addAttribute("errormessage", "Validation Error");
+	   model.addAttribute("labeluser", "Username");
+	   model.addAttribute("labelpassword", "Password");
+	   model.addAttribute("labelrememberme", "Remember me");
+	   model.addAttribute("buttonsubmit", "Login");
+	   model.addAttribute("labelforgotpassword", "Forgot password?");
+	   model.addAttribute("linkforgotpassword", "#");
+	   model.addAttribute("cancel", "Cancel");
+	   model.addAttribute("linklogout","/views/logout");
+	   model.addAttribute("labellogout","Logout");
 	   return "login";
 	}
-	@RequestMapping(value="/logout", method = RequestMethod.GET)
-	public String logout(HttpServletRequest request, HttpServletResponse response)
-	{
-	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	  
-	if (auth != null)
-	{
-	  new SecurityContextLogoutHandler().logout(request, response, auth);
-	}
-	return "redirect:/login";
-	}
+
 	//VENDITE BEGIN//
 	@GetMapping("/personale/vendite")
-	public String vendite(Model model)
+	public String vendite(Principal principal,Model model)
 	{
+	  
 		//can use model or modelandview!!! (int he view use a page
-	   addVenditeModelGridLabels(model);
+	   addVenditeModelGridLabels(principal,model);
 	  // model.addAttribute("vendite", venditeService.findAll());
-	   model.addAttribute("venditeService","/services/vendite");
+	   model.addAttribute("venditeservice","/services/vendite");
+	   model.addAttribute("venditeserviceauthtokenheader","Authorization");
+	  
 	   return "venditeView";
 	}
 
 	
 	@GetMapping("/personale/vendite/p/{id}")
-	public String venditeByIdProdotto(Model model,@PathVariable("id") int id)
+	public String venditeByIdProdotto(Principal principal,Model model,@PathVariable("id") int id)
 	{
+	   
 		//can use model or modelandview!!! (int he view use a page
 	   ProdottiEntity prodottoEntity = new ProdottiEntity();
 	   prodottoEntity.setId(id);
-	   addVenditeModelGridLabels(model);
+	   addVenditeModelGridLabels(principal,model);
 	  // model.addAttribute("vendite", venditeService.findByProdotto(prodottoEntity));
-	   model.addAttribute("venditeService","/services/vendite/p/"+id);
+	   model.addAttribute("venditeservice","/services/vendite/p/"+id);
+	
 	   return "venditeView";
 	}
 	@GetMapping("/personale/vendite/c/{id}")
-	public String venditeByIdCliente(Model model,@PathVariable("id") int id)
+	public String venditeByIdCliente(Principal principal,Model model,@PathVariable("id") int id)
 	{
-		//can use model or modelandview!!! (int he view use a page
 	   ClientiEntity clienteEntity = new ClientiEntity();
 	   clienteEntity.setId(id);
-	   addVenditeModelGridLabels(model);
-	   //model.addAttribute("vendite", venditeService.findByCliente(clienteEntity));
-	   model.addAttribute("venditeService","/services/vendite/c/"+id);
+	   addVenditeModelGridLabels(principal,model);
+	   model.addAttribute("venditeservice","/services/vendite/c/"+id);
+
 	   return "venditeView";
 	}
 	 @GetMapping(value = "/personale/vendite/pr/r/{priceMin}/{priceMax}")
-	 public String findByPriceRange(Model model,@PathVariable("priceMin") double prezzoMin,@PathVariable("priceMax") double prezzoMax) 
+	 public String findByPriceRange(Principal principal,Model model,@PathVariable("priceMin") double prezzoMin,@PathVariable("priceMax") double prezzoMax) 
 	 {   
-		addVenditeModelGridLabels(model);
- 	    //model.addAttribute("vendite", venditeService.findByPrezzoRange(prezzoMin,prezzoMax));	
+		addVenditeModelGridLabels(principal,model);
 		 model.addAttribute("venditeService","/services/vendite/pr/r/"+prezzoMin+"/"+prezzoMax);
  	    return "venditeView";
 	 }
 	 @GetMapping(value = "/personale/vendite/pr/l/{priceMax}")
-	 public String  findByPriceMinor(Model model,@PathVariable("priceMax") double prezzoMax) 
+	 public String  findByPriceMinor(Principal principal,Model model,@PathVariable("priceMax") double prezzoMax) 
 	 {   
-		 addVenditeModelGridLabels(model);
-		// model.addAttribute("vendite", venditeService.findByPrezzoMinor(prezzoMax));	
+		 addVenditeModelGridLabels(principal,model);
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMax);
 	 	 return "venditeView";		  
 	 }
 	 @GetMapping(value = "/personale/vendite/pr/m/{priceMin}")
-	 public String  findByPriceMajor(Model model,@PathVariable("priceMin") double prezzoMin) 
+	 public String  findByPriceMajor(Principal principal,Model model,@PathVariable("priceMin") double prezzoMin) 
 	 {   
-		 addVenditeModelGridLabels(model);
+		 addVenditeModelGridLabels(principal,model);
 		// model.addAttribute("vendite", venditeService.findByPrezzoMajor(prezzoMin));
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMin);
 	 	 return "venditeView";	  
 	 }
 	 
-	 private void addVenditeModelGridLabels(Model model) 
+	 private void addVenditeModelGridLabels(Principal principal, Model model) 
 	 {
-			model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle(TABLE_LANG));
-			model.addAttribute("venditeHeaders", MVCUtils.getVenditeHeaders(TABLE_LANG));
+		 String userName  = principal.getName();
+		 String authtoken = userAuthenticationService.getUserToken(userName);
+		 model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
+		 model.addAttribute("venditeHeaders", MVCUtils.getVenditeHeaders());
+		 model.addAttribute("venditeserviceauthtokenheader",TokenUtils.HEADER_STRING);
+		 model.addAttribute("venditeserviceauthtokenvalue",TokenUtils.TOKEN_PREFIX + authtoken);
+		 model.addAttribute("venditeservicetimeformatter",MVCUtils.getVenditeTimeFormatter());
+		 model.addAttribute("venditeservicecurrency","&euro;");
+		 model.addAttribute("venditeservicecurrencyprecision",2);
+		 model.addAttribute("venditeservicecurrencyseparator1",".");
+		 model.addAttribute("venditeservicecurrencyseparator2",",");
+		 
+		
+		 
 	}
 		//VENDITE END//
 		//CLIENTI BEGIN//
@@ -184,11 +212,11 @@ public class MagazzinoMVCViews
 	 {   
 		 ClientiEntityForCreate clienteu = new ClientiEntityForCreate(); 
          model.addAttribute("cliente",clienteu);
-         model.addAttribute("clienteFields", MVCUtils.getClassProperties("cliente",TABLE_LANG)); 
-         model.addAttribute("clientiGridLabels", MVCUtils.getClientiGridLabels(TABLE_LANG));
-		 model.addAttribute("clientiTitle", MVCUtils.getClientiTitle(TABLE_LANG));
-		 model.addAttribute("clientiCommands", MVCUtils.getClientiCommands(TABLE_LANG));
-		 model.addAttribute("clientiHeaders",  MVCUtils.getClientiHeaders(TABLE_LANG));
+         model.addAttribute("clienteFields", MVCUtils.getClassProperties("cliente")); 
+         model.addAttribute("clientiGridLabels", MVCUtils.getClientiGridLabels());
+		 model.addAttribute("clientiTitle", MVCUtils.getClientiTitle());
+		 model.addAttribute("clientiCommands", MVCUtils.getClientiCommands());
+		 model.addAttribute("clientiHeaders",  MVCUtils.getClientiHeaders());
 		 List<ClientiEntity> clienti = new ArrayList<ClientiEntity>();
 		 Optional<ClientiEntity> cliente = clientiService.findById(id);
 		 if(cliente.isPresent())
@@ -293,11 +321,11 @@ public class MagazzinoMVCViews
 	 
 	 private void addClientiModels(Model model, ClientiEntityForUpdate cliente) {
 		 model.addAttribute("cliente", cliente); // adding in model to bind get-post object
-         model.addAttribute("clienteFields", MVCUtils.getClassProperties("cliente",TABLE_LANG)); 
-         model.addAttribute("clientiGridLabels", MVCUtils.getClientiGridLabels(TABLE_LANG));
-		 model.addAttribute("clientiTitle", MVCUtils.getClientiTitle(TABLE_LANG));
-		 model.addAttribute("clientiCommands", MVCUtils.getClientiCommands(TABLE_LANG));
-		 model.addAttribute("clientiHeaders",  MVCUtils.getClientiHeaders(TABLE_LANG));
+         model.addAttribute("clienteFields", MVCUtils.getClassProperties("cliente")); 
+         model.addAttribute("clientiGridLabels", MVCUtils.getClientiGridLabels());
+		 model.addAttribute("clientiTitle", MVCUtils.getClientiTitle());
+		 model.addAttribute("clientiCommands", MVCUtils.getClientiCommands());
+		 model.addAttribute("clientiHeaders",  MVCUtils.getClientiHeaders());
 		 model.addAttribute("clienti", clientiService.findAllWithoutVendite());
 	}
 	 
@@ -449,21 +477,21 @@ public class MagazzinoMVCViews
 	
 	 private void addProdottiModelGridLabels(Model model, int row, int columns, int num, int pagine,String path)
 	 {
-			model.addAttribute("prodottiPager"  , MVCUtils.getProdottiPager(TABLE_LANG,num,row,pagine,-1,-1,path));
-			model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiTitle(TABLE_LANG));
-			model.addAttribute("prodottiHeaders",  MVCUtils.getProdottiHeaders(TABLE_LANG));
+			model.addAttribute("prodottiPager"  , MVCUtils.getProdottiPager(num,row,pagine,-1,-1,path));
+			model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiTitle());
+			model.addAttribute("prodottiHeaders",  MVCUtils.getProdottiHeaders());
 	 }
 	 
 	 private void addProdottiModelGridLabels(Model model, int row, int columns, int num, int pagine,int finestra,int finestre,ViewType viewType,String path)
 	 {
-			model.addAttribute("prodottiPager"  , MVCUtils.getProdottiPager(TABLE_LANG,num,row,pagine,finestra,finestre,path));
+			model.addAttribute("prodottiPager"  , MVCUtils.getProdottiPager(num,row,pagine,finestra,finestre,path));
 		
-			model.addAttribute("prodottiHeaders",  MVCUtils.getProdottiHeaders(TABLE_LANG));
+			model.addAttribute("prodottiHeaders",  MVCUtils.getProdottiHeaders());
 			switch(viewType)
 			{
-			  case VIEW_PRODOTTI_CLIENTE: model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiClienteTitle(TABLE_LANG));
+			  case VIEW_PRODOTTI_CLIENTE: model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiClienteTitle());
 			  break;
-			  case VIEW_PRODOTTI: model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiTitle(TABLE_LANG));
+			  case VIEW_PRODOTTI: model.addAttribute("prodottiTitle"  , MVCUtils.getProdottiTitle());
 			  break;
 			  default:
 			  break;

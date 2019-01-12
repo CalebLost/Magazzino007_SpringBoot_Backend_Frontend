@@ -19,7 +19,7 @@ import java.util.Set;
 
 import it.realttechnology.magazzino.entity.PersonaleEntity;
 import it.realttechnology.magazzino.entity.RolesEntity;
-import it.realttechnology.magazzino.security.TokenProperties;
+import it.realttechnology.magazzino.security.TokenUtils;
 
 
 
@@ -40,15 +40,15 @@ public class UserDetailsAuthenticationServiceImpl implements UserDetailsService
     		BCryptPasswordEncoder bCryptPasswordEncoder
 	)
     {
-        TOKEN_PWD = bCryptPasswordEncoder.encode(TokenProperties.TOKEN_AUTH_PWD);
+        TOKEN_PWD = bCryptPasswordEncoder.encode(TokenUtils.TOKEN_AUTH_PWD);
     }
     //GET A USER DETAILS SPRING SEC OBJ FROM DB USER
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException 
     {
 
-        PersonaleEntity user = userName.startsWith(TokenProperties.TOKEN_PREFIX)
-                ? personaleAuthentication.loginToken(userName.replace(TokenProperties.TOKEN_PREFIX, ""))
+        PersonaleEntity user = userName.startsWith(TokenUtils.TOKEN_PREFIX)
+                ? personaleAuthentication.loginToken(userName.replace(TokenUtils.TOKEN_PREFIX, ""))
                 : personaleAuthentication.loginUsername(userName);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
@@ -67,7 +67,7 @@ public class UserDetailsAuthenticationServiceImpl implements UserDetailsService
         }
         
         //TOKEN VALIDATOR
-        if (userName.startsWith(TokenProperties.TOKEN_PREFIX))
+        if (userName.startsWith(TokenUtils.TOKEN_PREFIX))
         {
             return new User
         		  (

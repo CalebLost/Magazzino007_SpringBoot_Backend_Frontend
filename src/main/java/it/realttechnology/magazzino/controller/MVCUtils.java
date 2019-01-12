@@ -22,17 +22,34 @@ public class MVCUtils
 	final static List<String> headersClientiIT             = new ArrayList();
 	
 	static MagazzinoConfigurator config;
+	static String lang;
 
+	public static void setConfig(MagazzinoConfigurator configurator,String language) 
+	{
+	  
 	
+		lang = language; 
+		setConfig(configurator);
+	}
+
 	public static void setConfig(MagazzinoConfigurator config) 
 	{
 		MVCUtils.config = config;
+		
+		switch(lang)
+		{
+		case "it_IT":
 		gridProdottiHeadersIT.clear();
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getId());
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getNome());
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getDescrizione());
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getQuantita());
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getPrezzo());
+		break;
+		default:
+			break;
+		}
+		
 	}
 
 	static
@@ -79,7 +96,7 @@ public class MVCUtils
 	}
 	
 	
-	 static List<String> getProdottiHeaders(String lang)
+	 static List<String> getProdottiHeaders()
 	 {
 		 List<String> headers = null;
 		 switch(lang)
@@ -92,7 +109,7 @@ public class MVCUtils
 		 return headers;
 	}
 	
-	static List<String> getVenditeHeaders(String lang)
+	static List<String> getVenditeHeaders()
 	 {
 		 List<String> headers = null;
 		 switch(lang)
@@ -105,7 +122,7 @@ public class MVCUtils
 		 return headers;
 	}
 	 
-	static List<String> getClientiHeaders(String lang)
+	static List<String> getClientiHeaders()
 	 {
 		 List<String> headers = null;
 		 switch(lang)
@@ -117,7 +134,7 @@ public class MVCUtils
 		 
 		 return headers;
 	}
-	  static List<Comando> getClientiCommands(String lang)
+	  static List<Comando> getClientiCommands()
 	 {
 		 List<Comando> comandi = null;
 		 switch(lang)
@@ -131,7 +148,7 @@ public class MVCUtils
 	}
 	 
 	
-	 static String getVenditeTitle(String lang)
+	 static String getVenditeTitle()
 	 {
 		String title = "{TITLE}";
 		
@@ -147,7 +164,7 @@ public class MVCUtils
 		 return title;
 	}
 	 
-	 static String getProdottiTitle(String lang)
+	 static String getProdottiTitle()
 	 {
 		String title = "{TITLE}";
 		
@@ -163,7 +180,7 @@ public class MVCUtils
 		 return title;
 	}
 	 
-	 public static String getProdottiClienteTitle(String lang) {
+	 public static String getProdottiClienteTitle() {
 		 String title = "{TITLE}";
 			
 		 switch(lang)
@@ -177,7 +194,7 @@ public class MVCUtils
 		 
 		 return title;
 		}
-	static String getClientiTitle(String lang)
+	static String getClientiTitle()
 	 {
 		String title = "{TITLE}";
 		
@@ -193,7 +210,7 @@ public class MVCUtils
 		 return title;
 	}
 	 
- static List<ClassProperty> getClassProperties(String name,String lang)
+ static List<ClassProperty> getClassProperties(String name)
 	 {
 		 List<ClassProperty> properties = new ArrayList();
 		 
@@ -218,11 +235,11 @@ public class MVCUtils
 		 return properties;
 	 }
 
-public static List<String> getClientiGridLabels(String tableLang)
+public static List<String> getClientiGridLabels()
 {
 	List<String> gridLabels = null;
 	
-	switch(tableLang)
+	switch(lang)
 	{
 	case "it_IT" :
 		gridLabels = gridClientiLabelsIT;
@@ -233,11 +250,11 @@ public static List<String> getClientiGridLabels(String tableLang)
 	return gridLabels;
 }
 
-public static Pager getProdottiPager(String tableLang, int num, int row, int pagine, int finestra, int finestre,String path)
+public static Pager getProdottiPager(int num, int row, int pagine, int finestra, int finestre,String path)
 {
     Pager pager = null;
 	
-	switch(tableLang)
+	switch(lang)
 	{
 	case "it_IT" :
 		
@@ -297,6 +314,13 @@ public static Pager getProdottiPager(String tableLang, int num, int row, int pag
 	
 	return pager;
 }
+
+public static String getVenditeTimeFormatter() 
+{
+	return "YYYY-MM-DD HH:mm:ss";
+}
+
+
 
 
 
