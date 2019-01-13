@@ -376,7 +376,66 @@ public static String getVenditeProdottoTitle()
 	 return result;
 }
 
+public static String getVenditeCurrency() {
+	
+		String result = "&euro;";
+		 switch(lang)
+		 {
+		   case "it_IT":  
+			   result = config.getIt_it().getVendite().getCurrency();
+		   break;
+		   default:  
+		   break;
+		 }
+		 
+		 return result;
+	
+}
+public static String getVenditeSeparatorOne() {
+	
+	String result = ",";
+	 switch(lang)
+	 {
+	   case "it_IT":  
+		   result = config.getIt_it().getVendite().getSeparatorOne();
+	   break;
+	   default:  
+	   break;
+	 }
+	 
+	 return result;
 
+}
+public static String getVenditeSeparatorTwo() {
+	
+	String result = ".";
+	 switch(lang)
+	 {
+	   case "it_IT":  
+		   result = config.getIt_it().getVendite().getSeparatorTwo();
+	   break;
+	   default:  
+	   break;
+	 }
+	 
+	 return result;
+
+}
+public static int getVenditePrecision() {
+	
+	int result = 2;
+	 switch(lang)
+	 {
+	   case "it_IT":  
+		   result = config.getIt_it().getVendite().getPrecision();
+	   break;
+	   default:  
+	   break;
+	 }
+	 
+	 return result;
+
+}
 
 
 

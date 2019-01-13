@@ -199,10 +199,10 @@ public class MagazzinoMVCViews
 		 model.addAttribute("venditeserviceauthtokenheader",TokenUtils.HEADER_STRING);
 		 model.addAttribute("venditeserviceauthtokenvalue",TokenUtils.TOKEN_PREFIX + authtoken);
 		 model.addAttribute("venditeservicetimeformatter",MVCUtils.getVenditeTimeFormatter());
-		 model.addAttribute("venditeservicecurrency","&euro;");
-		 model.addAttribute("venditeservicecurrencyprecision",2);
-		 model.addAttribute("venditeservicecurrencyseparator1",".");
-		 model.addAttribute("venditeservicecurrencyseparator2",",");
+		 model.addAttribute("venditeservicecurrency",MVCUtils.getVenditeCurrency());
+		 model.addAttribute("venditeservicecurrencyprecision",MVCUtils.getVenditePrecision());
+		 model.addAttribute("venditeservicecurrencyseparator1",MVCUtils.getVenditeSeparatorOne());
+		 model.addAttribute("venditeservicecurrencyseparator2",MVCUtils.getVenditeSeparatorOne());
 		 
 		
 		 

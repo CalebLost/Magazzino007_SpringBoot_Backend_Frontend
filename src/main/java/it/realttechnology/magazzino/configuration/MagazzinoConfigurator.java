@@ -41,6 +41,32 @@ public static class Vendite
 	//construct the class here to be filled after
     private VenditeHeaders headers = new VenditeHeaders();
     private String timeformatter;
+	private int precision;
+	private String currency;
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+	private String separatorone;
+	public String getSeparatorOne() {
+		return separatorone;
+	}
+
+	public void setSeparatorOne(String separatorOne) {
+		this.separatorone = separatorOne;
+	}
+
+	public String getSeparatorTwo() {
+		return separatortwo;
+	}
+
+	public void setSeparatorTwo(String separatorTwo) {
+		this.separatortwo = separatorTwo;
+	}
+	private String separatortwo;
 	public String getTimeformatter() {
 		return timeformatter;
 	}
@@ -78,6 +104,15 @@ public static class Vendite
 	public String getProdottoTitolo()
 	{
 		return this.titolo_prodotto;
+	}
+
+	public int getPrecision() 
+	{
+		return this.precision;
+	}
+	public void setPrecision(int precision) 
+	{
+		this.precision = precision;
 	}
 
 	
