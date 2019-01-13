@@ -71,6 +71,10 @@ public class MagazzinoMVCViews
 	
 	@Value("${login.avatar}")
 	private String loginAvatar;
+	@Value("${android.apk}")
+	private String androidapk;
+	@Value("${android.appname}")
+	private String androidappname;
 	@Value("${views.datatables.language}")
 	private String viewsDataTablesLanguage;
 	
@@ -113,6 +117,8 @@ public class MagazzinoMVCViews
 	   model.addAttribute("labelprodotti","Prodotti");
 	   model.addAttribute("linkclienti","/views/personale/clienti");
 	   model.addAttribute("labelclienti","Clienti");
+	   model.addAttribute("apk",androidapk);
+	   model.addAttribute("appname",androidappname);
 	   return "login";
 	}
 

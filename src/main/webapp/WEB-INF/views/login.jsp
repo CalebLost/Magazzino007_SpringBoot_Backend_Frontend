@@ -117,6 +117,8 @@ span.password {
   </div>
     <div class="container" style="background-color:#f1f1f1">
     <button type="reset" class="cancelbtn">${cancel}</button>
+      <BR>
+         <span class="psw"><a href="${resurl}${apk}">${appname}</a></span>
     <!--  
     <span class="psw"><a href="${linkforgotpassword}">${labelforgotpassword}</a></span>
     -->
@@ -137,6 +139,8 @@ span.password {
          <span class="psw"><a href="${linklogouturl}">${labellogout}</a></span>
          <span class="psw"><a href="${linkclientiurl}">${labelclienti}</a></span>
          <span class="psw"><a href="${linkprodottiurl}">${labelprodotti}</a></span>
+         <BR>
+         <span class="psw"><a href="${resurl}${apk}">${appname}</a></span>
        </div>
       </sec:authorize>
     </c:otherwise>
