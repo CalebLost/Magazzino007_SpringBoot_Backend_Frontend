@@ -81,12 +81,15 @@ span.password {
   }
 }
 </style>
+<c:url var="modalsandbuttonsurl"   value="/resources/modalsandbuttons/" />
+<link rel="stylesheet" type="text/css" href="${modalsandbuttonsurl}modalsandbuttons.css"/>
 </head>
 <body>
 
 
 
 <c:url var="resurl"   value="/resources/" />
+
 <form action="login" method="post">
   <div class="imgcontainer">
   <h2>${message}</h2>
@@ -118,7 +121,7 @@ span.password {
     <div class="container" style="background-color:#f1f1f1">
     <button type="reset" class="cancelbtn">${cancel}</button>
       <BR>
-         <span class="psw"><a href="${resurl}${apk}">${appname}</a></span>
+         <span class="psw"><img src="${resurl}android.png"/><a href="${resurl}${apk}">${appname}</a></span>
     <!--  
     <span class="psw"><a href="${linkforgotpassword}">${labelforgotpassword}</a></span>
     -->
@@ -134,13 +137,16 @@ span.password {
          <p>${role.authority}</p>
        </c:forEach>
          <c:url value="${linklogout}" var = "linklogouturl"></c:url>
-          <c:url value="${linkclienti}" var = "linkclientiurl"></c:url>
-           <c:url value="${linkprodotti}" var = "linkprodottiurl"></c:url>
-         <span class="psw"><a href="${linklogouturl}">${labellogout}</a></span>
-         <span class="psw"><a href="${linkclientiurl}">${labelclienti}</a></span>
-         <span class="psw"><a href="${linkprodottiurl}">${labelprodotti}</a></span>
+         <c:url value="${linkclienti}" var = "linkclientiurl"></c:url>
+         <c:url value="${linkvendite}" var = "linkvenditeurl"></c:url>
+         <c:url value="${linkprodotti}" var = "linkprodottiurl"></c:url>
+         <span class="psw"><a href="${linklogouturl}" >${labellogout}</a></span>
          <BR>
-         <span class="psw"><a href="${resurl}${apk}">${appname}</a></span>
+         <span class="psw"><a href="${linkclientiurl}" class="hrefButtonYellow">${labelclienti}</a></span>
+         <span class="psw"><a href="${linkvenditeurl}" class="hrefButtonGreen">${labelvendite}</a></span>
+         <span class="psw"><a href="${linkprodottiurl}" class="hrefButtonBlue">${labelprodotti}</a></span>
+         <BR>
+         <span class="psw"><img src="${resurl}android.png"/><a href="${resurl}${apk}">${appname}</a></span>
        </div>
       </sec:authorize>
     </c:otherwise>

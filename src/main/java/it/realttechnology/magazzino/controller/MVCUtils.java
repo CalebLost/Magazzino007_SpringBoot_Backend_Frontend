@@ -13,12 +13,12 @@ import it.realttechnology.magazzino.configuration.MagazzinoConfigurator;
 public class MVCUtils 
 {
 	
-	final static List<String> gridClientiLabelsIT          = new ArrayList();
+	final static List<String> gridCommonLabelsIT          = new ArrayList();
 	final static List<String> gridProdottiHeadersIT        = new ArrayList();
 	final static Pager gridProdottiPagerIT                 = new Pager();
 	final static List<ClassProperty> clientePropertiesIT   = new ArrayList();
 	final static List<Comando> comandiClientiIT            = new ArrayList<Comando>();
-	final static List<String> headersVenditeIT             = new ArrayList();
+	final static List<String> gridVenditeHeadersIT             = new ArrayList();
 	final static List<String> headersClientiIT             = new ArrayList();
 	
 	static MagazzinoConfigurator config;
@@ -39,6 +39,14 @@ public class MVCUtils
 		switch(lang)
 		{
 		case "it_IT":
+			
+		gridVenditeHeadersIT.clear();
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getId());
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getProdotto());
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getCliente());
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getPrezzo());
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getQuantita());
+		gridVenditeHeadersIT.add(config.getIt_it().getVendite().getHeaders().getData());
 		gridProdottiHeadersIT.clear();
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getId());
 		gridProdottiHeadersIT .add(config.getIt_it().getProdotti().getHeaders().getNome());
@@ -55,14 +63,14 @@ public class MVCUtils
 	static
 	{
 
-		gridClientiLabelsIT.add("Cerca");
-		gridClientiLabelsIT.add("Mostra _MENU_ records per pagina");
-		gridClientiLabelsIT.add("Nessun record trovato");
-		gridClientiLabelsIT.add("Nessun record disponibile");
-		gridClientiLabelsIT.add("Pagina _PAGE_ di _PAGES_");
-		gridClientiLabelsIT.add("Risultato filtrato da _MAX_ records totali");
-		gridClientiLabelsIT.add("Precedente");
-		gridClientiLabelsIT.add("Sucessiva");
+		gridCommonLabelsIT.add("Cerca");
+		gridCommonLabelsIT.add("Mostra _MENU_ records per pagina");
+		gridCommonLabelsIT.add("Nessun record trovato");
+		gridCommonLabelsIT.add("Nessun record disponibile");
+		gridCommonLabelsIT.add("Pagina _PAGE_ di _PAGES_");
+		gridCommonLabelsIT.add("Risultato filtrato da _MAX_ records totali");
+		gridCommonLabelsIT.add("Precedente");
+		gridCommonLabelsIT.add("Sucessiva");
 		
 		
 		
@@ -72,17 +80,11 @@ public class MVCUtils
 		clientePropertiesIT.add(new ClassProperty("indirizzo","Indirizzo:"));
 		
 		 comandiClientiIT.add(new Comando("VENDITE",null,null,"/views/personale/vendite/c/","get"));
+		 comandiClientiIT.add(new Comando("PRODOTTI",null,null,"/views/personale/prodotti/v/cc/","get"));
 		 comandiClientiIT.add(new Comando("AGGIUNGI" , "CONFERMA" , "ANNULLA","/views/personale/clienti","post"));
 		 comandiClientiIT.add(new Comando("AGGIORNA" , "CONFERMA" , "ANNULLA","/views/personale/clienti","put"));
 		 comandiClientiIT.add(new Comando("ELIMINA"  , "CONFERMA" , "ANNULLA","/views/personale/clienti/","delete"));
 		 
-		  headersVenditeIT.add("ID");
-		  headersVenditeIT.add("PRODOTTO");
-		  headersVenditeIT.add("CLIENTE");
-		  headersVenditeIT.add("PREZZO");
-		  headersVenditeIT.add("QUANTITA'");
-		  headersVenditeIT.add("DATA");
-		  
 		  headersClientiIT.add("ID");
 		  headersClientiIT.add("NOME");
 		  headersClientiIT.add("INDIRIZZO");
@@ -115,7 +117,7 @@ public class MVCUtils
 		 switch(lang)
 		 {
 		 case "it_IT":  
-		   headers = headersVenditeIT;
+		   headers = gridVenditeHeadersIT;
 		  break;
 		 }
 		 
@@ -155,7 +157,7 @@ public class MVCUtils
 		 switch(lang)
 		 {
 		   case "it_IT":  
-		    title = "Vendite";
+		    title =  config.getIt_it().getVendite().getTitolo();
 		   break;
 		   default:  
 		   break;
@@ -187,6 +189,20 @@ public class MVCUtils
 		 {
 		   case "it_IT":  
 		    title = config.getIt_it().getProdotti().getClienteTitolo();
+		   break;
+		   default:  
+		   break;
+		 }
+		 
+		 return title;
+		}
+	 public static String getVenditeClienteTitle() {
+		 String title = "{TITLE}";
+			
+		 switch(lang)
+		 {
+		   case "it_IT":  
+		    title = config.getIt_it().getVendite().getClienteTitolo();
 		   break;
 		   default:  
 		   break;
@@ -242,14 +258,27 @@ public static List<String> getClientiGridLabels()
 	switch(lang)
 	{
 	case "it_IT" :
-		gridLabels = gridClientiLabelsIT;
+		gridLabels = gridCommonLabelsIT;
 		break;
 	default: break;
 	}
 	
 	return gridLabels;
 }
-
+public static List<String> getVenditeGridLabels()
+{
+	List<String> gridLabels = null;
+	
+	switch(lang)
+	{
+	case "it_IT" :
+		gridLabels = gridCommonLabelsIT;
+		break;
+	default: break;
+	}
+	
+	return gridLabels;
+}
 public static Pager getProdottiPager(int num, int row, int pagine, int finestra, int finestre,String path)
 {
     Pager pager = null;
@@ -317,7 +346,34 @@ public static Pager getProdottiPager(int num, int row, int pagine, int finestra,
 
 public static String getVenditeTimeFormatter() 
 {
-	return "YYYY-MM-DD HH:mm:ss";
+	String timeFormatter = "YYYY-MM-DD HH:mm:ss";
+	
+	 switch(lang)
+	 {
+	   case "it_IT":  
+		   timeFormatter = config.getIt_it().getVendite().getTimeformatter();
+	   break;
+	   default:  
+	   break;
+	 }
+	 
+	 return timeFormatter;
+	
+}
+
+public static String getVenditeProdottoTitle()
+{
+	String result = "{TITLE}";
+	 switch(lang)
+	 {
+	   case "it_IT":  
+		   result = config.getIt_it().getVendite().getProdottoTitolo();
+	   break;
+	   default:  
+	   break;
+	 }
+	 
+	 return result;
 }
 
 

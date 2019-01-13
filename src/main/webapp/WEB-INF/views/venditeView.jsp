@@ -25,7 +25,14 @@
 <script type="text/javascript" class="init">
 	
 var venditeCurrency = "<c:out value="${venditeservicecurrency}" escapeXml="false"></c:out>";
-
+var slang =               '<c:out value="${venditeGridLabels[0]}"></c:out>';
+var sleng =               '<c:out value="${venditeGridLabels[1]}"></c:out>';
+var snorecordsfound =     '<c:out value="${venditeGridLabels[2]}"></c:out>';
+var snorecordsavailable = '<c:out value="${venditeGridLabels[3]}"></c:out>';
+var spager =              '<c:out value="${venditeGridLabels[4]}"></c:out>';
+var sfilter =             '<c:out value="${venditeGridLabels[5]}"></c:out>';
+var sprevious =           '<c:out value="${venditeGridLabels[6]}"></c:out>';
+var snext =               '<c:out value="${venditeGridLabels[7]}"></c:out>';
 $(document).ready(function()
 		{
 	$('#venditeTable').DataTable
@@ -77,6 +84,21 @@ $(document).ready(function()
 						}
 						
 					]
+				,
+				  "language" :  {
+	                    "sSearch" :     slang,
+					    "lengthMenu":   sleng,
+			            "zeroRecords":  snorecordsfound,
+			            "info":         spager,
+			            "infoEmpty":    snorecordsavailable,
+			            "infoFiltered": sfilter,
+			            "paginate"    : 
+			                             {
+			            	                "previous" : sprevious,
+			            	                "next"     : snext
+			                             }
+
+					  }
 					
 			}
 			

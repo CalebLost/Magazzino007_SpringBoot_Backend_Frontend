@@ -113,9 +113,11 @@ public class MagazzinoMVCViews
 	   model.addAttribute("cancel", "Cancel");
 	   model.addAttribute("linklogout","/views/logout");
 	   model.addAttribute("labellogout","Logout");
-	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/5/0/3");
+	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/10/0/3");
 	   model.addAttribute("labelprodotti","Prodotti");
 	   model.addAttribute("linkclienti","/views/personale/clienti");
+	   model.addAttribute("labelvendite","Vendite");
+	   model.addAttribute("linkvendite","/views/personale/vendite");
 	   model.addAttribute("labelclienti","Clienti");
 	   model.addAttribute("apk",androidapk);
 	   model.addAttribute("appname",androidappname);
@@ -129,6 +131,7 @@ public class MagazzinoMVCViews
 	  
 		//can use model or modelandview!!! (int he view use a page
 	   addVenditeModelGridLabels(principal,model);
+	   model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 	  // model.addAttribute("vendite", venditeService.findAll());
 	   model.addAttribute("venditeservice","/services/vendite");
 	   model.addAttribute("venditeserviceauthtokenheader","Authorization");
@@ -144,6 +147,7 @@ public class MagazzinoMVCViews
 		//can use model or modelandview!!! (int he view use a page
 	   ProdottiEntity prodottoEntity = new ProdottiEntity();
 	   prodottoEntity.setId(id);
+	   model.addAttribute("venditeTitle", MVCUtils.getVenditeProdottoTitle());
 	   addVenditeModelGridLabels(principal,model);
 	  // model.addAttribute("vendite", venditeService.findByProdotto(prodottoEntity));
 	   model.addAttribute("venditeservice","/services/vendite/p/"+id);
@@ -153,8 +157,8 @@ public class MagazzinoMVCViews
 	@GetMapping("/personale/vendite/c/{id}")
 	public String venditeByIdCliente(Principal principal,Model model,@PathVariable("id") int id)
 	{
-	   ClientiEntity clienteEntity = new ClientiEntity();
-	   clienteEntity.setId(id);
+
+	   model.addAttribute("venditeTitle", MVCUtils.getVenditeClienteTitle());
 	   addVenditeModelGridLabels(principal,model);
 	   model.addAttribute("venditeservice","/services/vendite/c/"+id);
 
@@ -164,6 +168,7 @@ public class MagazzinoMVCViews
 	 public String findByPriceRange(Principal principal,Model model,@PathVariable("priceMin") double prezzoMin,@PathVariable("priceMax") double prezzoMax) 
 	 {   
 		addVenditeModelGridLabels(principal,model);
+		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		 model.addAttribute("venditeService","/services/vendite/pr/r/"+prezzoMin+"/"+prezzoMax);
  	    return "venditeView";
 	 }
@@ -171,6 +176,7 @@ public class MagazzinoMVCViews
 	 public String  findByPriceMinor(Principal principal,Model model,@PathVariable("priceMax") double prezzoMax) 
 	 {   
 		 addVenditeModelGridLabels(principal,model);
+		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMax);
 	 	 return "venditeView";		  
 	 }
@@ -178,6 +184,7 @@ public class MagazzinoMVCViews
 	 public String  findByPriceMajor(Principal principal,Model model,@PathVariable("priceMin") double prezzoMin) 
 	 {   
 		 addVenditeModelGridLabels(principal,model);
+		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		// model.addAttribute("vendite", venditeService.findByPrezzoMajor(prezzoMin));
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMin);
 	 	 return "venditeView";	  
@@ -187,7 +194,7 @@ public class MagazzinoMVCViews
 	 {
 		 String userName  = principal.getName();
 		 String authtoken = userAuthenticationService.getUserToken(userName);
-		 model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
+         model.addAttribute("venditeGridLabels", MVCUtils.getVenditeGridLabels());
 		 model.addAttribute("venditeHeaders", MVCUtils.getVenditeHeaders());
 		 model.addAttribute("venditeserviceauthtokenheader",TokenUtils.HEADER_STRING);
 		 model.addAttribute("venditeserviceauthtokenvalue",TokenUtils.TOKEN_PREFIX + authtoken);
