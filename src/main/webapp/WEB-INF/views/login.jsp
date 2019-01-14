@@ -81,18 +81,17 @@ span.password {
   }
 }
 </style>
-<c:url var="modalsandbuttonsurl"   value="/resources/modalsandbuttons/" />
-<link rel="stylesheet" type="text/css" href="${modalsandbuttonsurl}modalsandbuttons.css"/>
 </head>
 <body>
-
+<jsp:include page="parts/login-operations.jsp"></jsp:include>
+   
 
 
 <c:url var="resurl"   value="/resources/" />
 
 <form action="login" method="post">
   <div class="imgcontainer">
-  <h2>${message}</h2>
+  <h2>${titolo}</h2>
     <img src="${resurl}${avatar}" alt="Avatar" class="avatar">
   </div>
 
@@ -107,10 +106,10 @@ span.password {
 		</c:if>
 		
      <label class ="leftLabel" for="username"><b>${labeluser}</b></label>
-    <input type="text" placeholder="Enter Username" id="username" name="username" required>
+    <input type="text" placeholder="${labelmissingusername}" id="username" name="username" required>
 
     <label class ="leftLabel" for="password"><b>${labelpassword}</b></label>
-    <input type="password" placeholder="Enter Password" id="password" name="password" required>
+    <input type="password" placeholder="${labelmissingpassword}" id="password" name="password" required>
         
     <button type="submit">${buttonsubmit}</button>
     <label class ="leftLabel">
@@ -129,23 +128,12 @@ span.password {
     </c:when>    
     <c:otherwise>
       <sec:authorize access="isAuthenticated()"> 
-      <sec:authentication var="user" property="principal.username" />
       <sec:authentication var="roles" property="principal.authorities" />
         <div class="container" style="background-color:#f1f1f1">
-       <p>${user}</p>
        <c:forEach items="${roles}" var="role" varStatus="vs">
          <p>${role.authority}</p>
        </c:forEach>
-         <c:url value="${linklogout}" var = "linklogouturl"></c:url>
-         <c:url value="${linkclienti}" var = "linkclientiurl"></c:url>
-         <c:url value="${linkvendite}" var = "linkvenditeurl"></c:url>
-         <c:url value="${linkprodotti}" var = "linkprodottiurl"></c:url>
-         <span class="psw"><a href="${linklogouturl}" >${labellogout}</a></span>
-         <BR>
-         <span class="psw"><a href="${linkclientiurl}" class="hrefButtonYellow">${labelclienti}</a></span>
-         <span class="psw"><a href="${linkvenditeurl}" class="hrefButtonGreen">${labelvendite}</a></span>
-         <span class="psw"><a href="${linkprodottiurl}" class="hrefButtonBlue">${labelprodotti}</a></span>
-         <BR>
+       
          <span class="psw"><img src="${resurl}android.png"/><a href="${resurl}${apk}">${appname}</a></span>
        </div>
       </sec:authorize>

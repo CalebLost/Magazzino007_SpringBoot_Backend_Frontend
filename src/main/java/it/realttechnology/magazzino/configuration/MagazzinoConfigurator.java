@@ -22,17 +22,90 @@ public void setTitolo(String titolo) {
 	this.titolo = titolo;
 }
 
-private it_IT it_it = new it_IT();
+private it_IT it_IT = new it_IT();
 
-public void setIt_it(it_IT it_it) 
+public void setit_IT(it_IT it_IT) 
 {
-	this.it_it = it_it;
+	this.it_IT = it_IT;
 }
-public it_IT getIt_it() 
+public it_IT getit_IT() 
 {
-	return it_it;
+	return it_IT;
 }
+public static class Login
+{
+	private String titolo;
+	public String getTitolo() {
+		return titolo;
+	}
+	public void setTitolo(String titolo) {
+		this.titolo = titolo;
+	}
+	private String nome;
+	private String password;
+	private String nomemancante;
+	private String passwordmancante;
+	private String cancella;
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getNomemancante() {
+		return nomemancante;
+	}
+	public void setNomemancante(String nomemancante) {
+		this.nomemancante = nomemancante;
+	}
+	public String getPasswordmancante() {
+		return passwordmancante;
+	}
+	public void setPasswordmancante(String passwordmancante) {
+		this.passwordmancante = passwordmancante;
+	}
+	public String getCancella() {
+		return cancella;
+	}
+	public void setCancella(String cancella) {
+		this.cancella = cancella;
+	}
+	public String getEntra() {
+		return entra;
+	}
+	public void setEntra(String entra) {
+		this.entra = entra;
+	}
+	public String getEsci() {
+		return esci;
+	}
+	public void setEsci(String esci) {
+		this.esci = esci;
+	}
+	public String getRicordati() {
+		return ricordati;
+	}
+	public void setRicordati(String ricordati) {
+		this.ricordati = ricordati;
+	}
+	private String entra;
+	private String esci;
+	private String ricordati;
+	private String errore;
+	public String getErrore() {
+		return errore;
+	}
+	public void setErrore(String errore) {
+		this.errore = errore;
+	}
 
+}
 public static class Vendite
 {
 	private String titolo;
@@ -242,7 +315,14 @@ public static class it_IT
 {
 	private Prodotti prodotti = new Prodotti();
 	private Vendite vendite = new Vendite();
-    public void setProdotti(Prodotti prodotti)
+	private Login login = new Login();
+    public Login getLogin() {
+		return login;
+	}
+	public void setLogin(Login login) {
+		this.login = login;
+	}
+	public void setProdotti(Prodotti prodotti)
     {
 		this.prodotti = prodotti;
 	}

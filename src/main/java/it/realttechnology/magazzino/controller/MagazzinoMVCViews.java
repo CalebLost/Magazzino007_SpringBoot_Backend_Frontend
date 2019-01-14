@@ -85,7 +85,7 @@ public class MagazzinoMVCViews
 	static
 	{
 		USE_CONFIG = true;
-		TABLE_LANG = "it_IT";
+		TABLE_LANG = "it-IT";
 		
 	}
 	
@@ -101,29 +101,36 @@ public class MagazzinoMVCViews
 	//when operating with jsp view is possible to interact with the datamodel passing it as parameter and populating it
 	public String login(Model model, @RequestParam(value="message", required=false, defaultValue="Login") String message)
 	{
-	   model.addAttribute("message", message);
+	   model.addAttribute("titolo", MVCUtils.getLogin().getTitolo());
 	   model.addAttribute("avatar", loginAvatar);
-	   model.addAttribute("errormessage", "Validation Error");
-	   model.addAttribute("labeluser", "Username");
-	   model.addAttribute("labelpassword", "Password");
-	   model.addAttribute("labelrememberme", "Remember me");
-	   model.addAttribute("buttonsubmit", "Login");
-	   model.addAttribute("labelforgotpassword", "Forgot password?");
+	   model.addAttribute("errormessage", MVCUtils.getLogin().getErrore());
+	   model.addAttribute("labeluser", MVCUtils.getLogin().getNome());
+	   model.addAttribute("labelpassword",  MVCUtils.getLogin().getPassword());
+	   model.addAttribute("labelrememberme",  MVCUtils.getLogin().getRicordati());
+	   model.addAttribute("buttonsubmit",  MVCUtils.getLogin().getEntra());
+	   model.addAttribute("labelforgotpassword",  "Password dimenticata?");
+	   model.addAttribute("labelmissingusername",  MVCUtils.getLogin().getNomemancante());
+	   model.addAttribute("labelmissingpassword",  MVCUtils.getLogin().getPasswordmancante());
 	   model.addAttribute("linkforgotpassword", "#");
-	   model.addAttribute("cancel", "Cancel");
-	   model.addAttribute("linklogout","/views/logout");
-	   model.addAttribute("labellogout","Logout");
-	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/10/0/3");
-	   model.addAttribute("labelprodotti","Prodotti");
-	   model.addAttribute("linkclienti","/views/personale/clienti");
-	   model.addAttribute("labelvendite","Vendite");
-	   model.addAttribute("linkvendite","/views/personale/vendite");
-	   model.addAttribute("labelclienti","Clienti");
+	   model.addAttribute("cancel",  MVCUtils.getLogin().getCancella());	 
 	   model.addAttribute("apk",androidapk);
 	   model.addAttribute("appname",androidappname);
+	   addLoggedOperationsModel(model);
 	   return "login";
 	}
-
+	
+	public void addLoggedOperationsModel(Model model)
+	{
+	
+	   model.addAttribute("linklogout","/views/logout");
+	   model.addAttribute("labellogout",MVCUtils.getLogin().getEsci());
+	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/10/0/3");
+	   model.addAttribute("labelprodotti",MVCUtils.getProdottiTitle());
+	   model.addAttribute("linkclienti","/views/personale/clienti");
+	   model.addAttribute("labelvendite",MVCUtils.getVenditeTitle());
+	   model.addAttribute("linkvendite","/views/personale/vendite");
+	   model.addAttribute("labelclienti",MVCUtils.getClientiTitle());
+	}
 	//VENDITE BEGIN//
 	@GetMapping("/personale/vendite")
 	public String vendite(Principal principal,Model model)
@@ -135,7 +142,7 @@ public class MagazzinoMVCViews
 	  // model.addAttribute("vendite", venditeService.findAll());
 	   model.addAttribute("venditeservice","/services/vendite");
 	   model.addAttribute("venditeserviceauthtokenheader","Authorization");
-	  
+	   addLoggedOperationsModel(model);
 	   return "venditeView";
 	}
 
@@ -151,7 +158,7 @@ public class MagazzinoMVCViews
 	   addVenditeModelGridLabels(principal,model);
 	  // model.addAttribute("vendite", venditeService.findByProdotto(prodottoEntity));
 	   model.addAttribute("venditeservice","/services/vendite/p/"+id);
-	
+	   addLoggedOperationsModel(model);
 	   return "venditeView";
 	}
 	@GetMapping("/personale/vendite/c/{id}")
@@ -161,6 +168,7 @@ public class MagazzinoMVCViews
 	   model.addAttribute("venditeTitle", MVCUtils.getVenditeClienteTitle());
 	   addVenditeModelGridLabels(principal,model);
 	   model.addAttribute("venditeservice","/services/vendite/c/"+id);
+	   addLoggedOperationsModel(model);
 
 	   return "venditeView";
 	}
@@ -170,6 +178,7 @@ public class MagazzinoMVCViews
 		addVenditeModelGridLabels(principal,model);
 		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		 model.addAttribute("venditeService","/services/vendite/pr/r/"+prezzoMin+"/"+prezzoMax);
+		 addLoggedOperationsModel(model);
  	    return "venditeView";
 	 }
 	 @GetMapping(value = "/personale/vendite/pr/l/{priceMax}")
@@ -178,6 +187,7 @@ public class MagazzinoMVCViews
 		 addVenditeModelGridLabels(principal,model);
 		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMax);
+		 addLoggedOperationsModel(model);
 	 	 return "venditeView";		  
 	 }
 	 @GetMapping(value = "/personale/vendite/pr/m/{priceMin}")
@@ -187,6 +197,7 @@ public class MagazzinoMVCViews
 		  model.addAttribute("venditeTitle", MVCUtils.getVenditeTitle());
 		// model.addAttribute("vendite", venditeService.findByPrezzoMajor(prezzoMin));
 		 model.addAttribute("venditeService","/services/vendite/pr/l/"+prezzoMin);
+		 addLoggedOperationsModel(model);
 	 	 return "venditeView";	  
 	 }
 	 
@@ -203,7 +214,6 @@ public class MagazzinoMVCViews
 		 model.addAttribute("venditeservicecurrencyprecision",MVCUtils.getVenditePrecision());
 		 model.addAttribute("venditeservicecurrencyseparator1",MVCUtils.getVenditeSeparatorOne());
 		 model.addAttribute("venditeservicecurrencyseparator2",MVCUtils.getVenditeSeparatorOne());
-		 
 		
 		 
 	}
@@ -214,6 +224,7 @@ public class MagazzinoMVCViews
 	 {   
 		 ClientiEntityForUpdate cliente = new ClientiEntityForUpdate(); // declareing
          addClientiModels(model, cliente);	
+         addLoggedOperationsModel(model);
 	 	 return "clientiView";	  
 	 }
 
@@ -236,7 +247,8 @@ public class MagazzinoMVCViews
 		 {
 		  clienti.add(cliente.get());
 		 }
-		 model.addAttribute("clienti", clienti);	
+		 model.addAttribute("clienti", clienti);
+		 addLoggedOperationsModel(model);
 	 	 return "clientiView";	  
 	 }
 	 
@@ -356,6 +368,7 @@ public class MagazzinoMVCViews
     	 int columns = 0;
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,null);
 		 model.addAttribute("prodotti", prodotti);	
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 	
@@ -369,6 +382,7 @@ public class MagazzinoMVCViews
     	 int columns = 0;
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,null);
 		 model.addAttribute("prodotti", prodotti);	
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 	 
@@ -382,6 +396,7 @@ public class MagazzinoMVCViews
     	 int columns = 0;
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,null);
     	 model.addAttribute("prodotti", prodotti);
+    	 addLoggedOperationsModel(model);
     	 return "prodottiView";
 	 }
      
@@ -394,7 +409,7 @@ public class MagazzinoMVCViews
     	 int row = 0;
     	 int columns = 0;
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,null);
-    	 model.addAttribute("prodotti", prodotti);
+    	 model.addAttribute("prodotti", prodotti); addLoggedOperationsModel(model);
     	 return "prodottiView";		  
 	 }
      
@@ -407,7 +422,8 @@ public class MagazzinoMVCViews
 		 
 		 addProdottiModelGridLabels(model, row, columns, num, pagine,"/views/personale/prodotti/p/{row}/"+columns);
 		 
-		 model.addAttribute("prodotti", prodotti);	
+		 model.addAttribute("prodotti", prodotti);
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 
@@ -420,7 +436,7 @@ public class MagazzinoMVCViews
 
 		 
 		 addProdottiModelGridLabels(model, row, columns, num, pagine, win,wins,ViewType.VIEW_PRODOTTI,"/views/personale/prodotti/p/{row}/"+columns+"/{win}/"+wins);
-		 
+		 addLoggedOperationsModel(model);
 		 model.addAttribute("prodotti", prodotti);	
 	 	 return "prodottiView";	  
 	 }
@@ -430,13 +446,15 @@ public class MagazzinoMVCViews
 	 @GetMapping(value = "/personale/prodotti/v/cc/{id}/{row}/{columns}")
 	 public String  findByVenditeClienteWithoutVenditePaging(Model model,@PathVariable("id") int id,@PathVariable("row") int row,@PathVariable("columns") int columns) 
 	 {   
-		 addProdottiByIdClienteModelNoVPaging(model, id, row, columns);	
+		 addProdottiByIdClienteModelNoVPaging(model, id, row, columns);
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 	 @GetMapping(value = "/personale/prodotti/v/cc/{id}/{row}/{columns}/{win}/{wins}")
 	 public String  findByVenditeClienteWithoutVenditePaging(Model model,@PathVariable("id") int id,@PathVariable("row") int row,@PathVariable("win") int win,@PathVariable("wins") int wins,@PathVariable("columns") int columns) 
 	 {   
-		 addProdottiByIdClienteModelNoVPaging(model, id, row, columns,win, wins);	
+		 addProdottiByIdClienteModelNoVPaging(model, id, row, columns,win, wins);
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 
@@ -445,12 +463,14 @@ public class MagazzinoMVCViews
 	 public String  findByVenditeClienteWithoutVendite(Model model,@PathVariable("id") int id) 
 	 {   
 		 addProdottiByIdClienteModelNoV(model, id);	
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 	 @GetMapping(value = "/personale/prodotti/v/cv/{id}")
 	 public String  findByVenditeCliente(Model model,@PathVariable("id") int id) 
 	 {   
-		 addProdottiByIdClienteModel(model, id);	
+		 addProdottiByIdClienteModel(model, id);
+		 addLoggedOperationsModel(model);
 	 	 return "prodottiView";	  
 	 }
 	

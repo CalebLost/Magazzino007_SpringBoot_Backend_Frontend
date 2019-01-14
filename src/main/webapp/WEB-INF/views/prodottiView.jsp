@@ -49,6 +49,7 @@
 
 </head>
 <body>
+<jsp:include page="parts/login-operations.jsp"></jsp:include>
 <h1 align="center">${prodottiTitle}</h1>
 </br>
 <DIV class="prodottiGrid">

@@ -107,6 +107,7 @@ $(document).ready(function()
 </script>
 </head>
 <body>
+<jsp:include page="parts/login-operations.jsp"></jsp:include>
 <h1 align="center">${venditeTitle}</h1>
 </br>
 <table id="venditeTable" class="display" style="width:100%">

@@ -62,7 +62,7 @@ $(document).ready(function() {
 	
 </head>
 <body>
-
+<jsp:include page="parts/login-operations.jsp"></jsp:include>
 <h1 align="center">${clientiTitle}</h1>
 </br>
 <table id="clientiGrid" class="display" style="width:100%">
