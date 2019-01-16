@@ -1,9 +1,16 @@
 package it.realttechnology.magazzino.configuration;
 
+import java.util.Locale;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
 
 import it.realttechnology.magazzino.controller.PagerPage;
@@ -13,8 +20,17 @@ import it.realttechnology.magazzino.controller.PagerPage;
 @ConfigurationProperties("magazzino")
 public class MagazzinoConfigurator 
 {
+	
+ @Autowired
+private MessageSource messageSource;
+	    
  private String titolo;
-
+ 
+ @PostConstruct
+ private void init() 
+ {
+	 it_IT.set(messageSource);
+ }
 public String getTitolo() {
 	return titolo;
 }
@@ -27,6 +43,7 @@ private it_IT it_IT = new it_IT();
 public void setit_IT(it_IT it_IT) 
 {
 	this.it_IT = it_IT;
+	
 }
 public it_IT getit_IT() 
 {
@@ -316,9 +333,42 @@ public static class it_IT
 	private Prodotti prodotti = new Prodotti();
 	private Vendite vendite = new Vendite();
 	private Login login = new Login();
-    public Login getLogin() {
+	private MessageSourceAccessor accessor;
+	private String[] clientiHeaders;
+	
+	//test
+	public String[] getClientiHeaders()
+	{
+		if(clientiHeaders == null)
+		{
+			clientiHeaders = new String[]
+				{
+				accessor.getMessage("CLIENTI_ID"),
+				accessor.getMessage("CLIENTI_NOME"),
+				accessor.getMessage("CLIENTI_INDIRIZZO"),
+				accessor.getMessage("CLIENTI_TELEFONO"),
+				accessor.getMessage("CLIENTI_OPERAZIONI")
+				};
+		}
+		return clientiHeaders;
+	}
+	
+    public Login getLogin() 
+    {
 		return login;
 	}
+    
+    void set(MessageSource source)
+    {
+    	accessor = new MessageSourceAccessor(source, Locale.ITALIAN);
+    }
+    
+    public it_IT()
+    {
+    
+    }
+    
+    
 	public void setLogin(Login login) {
 		this.login = login;
 	}

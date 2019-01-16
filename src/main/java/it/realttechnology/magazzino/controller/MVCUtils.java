@@ -1,6 +1,7 @@
 package it.realttechnology.magazzino.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +28,7 @@ public class MVCUtils
 	static MagazzinoConfigurator config;
 	static String lang;
 
+	//update the config with the given language adding external resources
 	public static void setConfig(MagazzinoConfigurator configurator,String language) 
 	{
 	  
@@ -34,20 +36,35 @@ public class MVCUtils
 		lang = language; 
 		if(lang==null)
 		{
-			Locale locale = LocaleContextHolder.getLocale();
-			lang = locale.getDisplayLanguage();
+			lang = getLang();
 		}
 		setConfig(configurator);
 	}
+	
+	//update the config with the given language, assume the resources are loaded
+	public static void setConfig(String language)
+	{
+		lang = language; 
+		
+		if(lang==null)
+		{
+			lang = getLang();
+		}
+		
+		setConfig(config);
+	}
 
+	private static String getLang() {
+		Locale locale = LocaleContextHolder.getLocale();
+		return locale.toString();
+	}
+	
+	//add resources
 	public static void setConfig(MagazzinoConfigurator config) 
 	{
 		MVCUtils.config = config;
 		
-		switch(lang)
-		{
-		case "it-IT":
-			
+	//TODO: populate all sources for each language here
 		gridVenditeHeadersIT.clear();
 		gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getId());
 		gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getProdotto());
@@ -55,31 +72,24 @@ public class MVCUtils
 		gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getPrezzo());
 		gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getQuantita());
 		gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getData());
+		
 		gridProdottiHeadersIT.clear();
 		gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getId());
 		gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getNome());
 		gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getDescrizione());
 		gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getQuantita());
 		gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getPrezzo());
-		break;
-		default:
-			
-			gridVenditeHeadersIT.clear();
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getId());
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getProdotto());
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getCliente());
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getPrezzo());
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getQuantita());
-			gridVenditeHeadersIT.add(config.getit_IT().getVendite().getHeaders().getData());
-			gridProdottiHeadersIT.clear();
-			gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getId());
-			gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getNome());
-			gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getDescrizione());
-			gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getQuantita());
-			gridProdottiHeadersIT .add(config.getit_IT().getProdotti().getHeaders().getPrezzo());
-			
-			break;
+		
+		
+		headersClientiIT.clear();
+		
+		//TODO: add header method to proper res class
+		for(String s: config.getit_IT().getClientiHeaders())
+		{
+			headersClientiIT.add(s);
 		}
+	
+		
 		
 	}
 
@@ -107,12 +117,7 @@ public class MVCUtils
 		 comandiClientiIT.add(new Comando("AGGIUNGI" , "CONFERMA" , "ANNULLA","/views/personale/clienti","post"));
 		 comandiClientiIT.add(new Comando("AGGIORNA" , "CONFERMA" , "ANNULLA","/views/personale/clienti","put"));
 		 comandiClientiIT.add(new Comando("ELIMINA"  , "CONFERMA" , "ANNULLA","/views/personale/clienti/","delete"));
-		 
-		  headersClientiIT.add("ID");
-		  headersClientiIT.add("NOME");
-		  headersClientiIT.add("INDIRIZZO");
-		  headersClientiIT.add("TELEFONO");
-		  headersClientiIT.add("OPERAZIONI");
+		
 		  
 		  gridProdottiPagerIT.setColonne(5);
 		  gridProdottiPagerIT.setPrecedente("Precedente");
@@ -124,9 +129,9 @@ public class MVCUtils
 	 static List<String> getProdottiHeaders()
 	 {
 		 List<String> headers = null;
-		 switch(lang)
+		  switch(getLang())
 		 {
-		 case "it-IT":  
+		 case "it_IT":  
 		  headers = gridProdottiHeadersIT;
 		  break;
 		 }
@@ -137,9 +142,9 @@ public class MVCUtils
 	static List<String> getVenditeHeaders()
 	 {
 		 List<String> headers = null;
-		 switch(lang)
+		  switch(getLang())
 		 {
-		 case "it-IT":  
+		 case "it_IT":  
 		   headers = gridVenditeHeadersIT;
 		  break;
 		 }
@@ -150,9 +155,9 @@ public class MVCUtils
 	static List<String> getClientiHeaders()
 	 {
 		 List<String> headers = null;
-		 switch(lang)
+		  switch(getLang())
 		 {
-		 case "it-IT":  
+		 case "it_IT":  
 		     headers = headersClientiIT;
 		  break;
 		 }
@@ -162,9 +167,9 @@ public class MVCUtils
 	  static List<Comando> getClientiCommands()
 	 {
 		 List<Comando> comandi = null;
-		 switch(lang)
+		  switch(getLang())
 		 {
-		 case "it-IT":  
+		 case "it_IT":  
 			 comandi = comandiClientiIT;
 		  break;
 		 }
@@ -177,9 +182,9 @@ public class MVCUtils
 	 {
 		String title = "{TITLE}";
 		
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    title =  config.getit_IT().getVendite().getTitolo();
 		   break;
 		   default:  
@@ -193,9 +198,9 @@ public class MVCUtils
 	 {
 		String title = "{TITLE}";
 		
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    title = config.getit_IT().getProdotti().getTitolo();
 		   break;
 		   default:  
@@ -208,9 +213,9 @@ public class MVCUtils
 	 public static String getProdottiClienteTitle() {
 		 String title = "{TITLE}";
 			
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    title = config.getit_IT().getProdotti().getClienteTitolo();
 		   break;
 		   default:  
@@ -222,9 +227,9 @@ public class MVCUtils
 	 public static String getVenditeClienteTitle() {
 		 String title = "{TITLE}";
 			
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    title = config.getit_IT().getVendite().getClienteTitolo();
 		   break;
 		   default:  
@@ -237,9 +242,9 @@ public class MVCUtils
 	 {
 		String title = "{TITLE}";
 		
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    title = "Clienti";
 		   break;
 		   default:  
@@ -253,9 +258,9 @@ public class MVCUtils
 	 {
 		 List<ClassProperty> properties = new ArrayList();
 		 
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 		    switch(name)
 		    {
 		    case "cliente":
@@ -278,9 +283,9 @@ public static List<String> getClientiGridLabels()
 {
 	List<String> gridLabels = null;
 	
-	switch(lang)
+	 switch(getLang())
 	{
-	case "it-IT" :
+	case "it_IT" :
 		gridLabels = gridCommonLabelsIT;
 		break;
 	default: break;
@@ -292,9 +297,9 @@ public static List<String> getVenditeGridLabels()
 {
 	List<String> gridLabels = null;
 	
-	switch(lang)
+	 switch(getLang())
 	{
-	case "it-IT" :
+	case "it_IT" :
 		gridLabels = gridCommonLabelsIT;
 		break;
 	default: break;
@@ -306,9 +311,9 @@ public static Pager getProdottiPager(int num, int row, int pagine, int finestra,
 {
     Pager pager = null;
 	
-	switch(lang)
+	 switch(getLang())
 	{
-	case "it-IT" :
+	case "it_IT" :
 		
 		pager = gridProdottiPagerIT;
 		pager.setPagine(new ArrayList<PagerPage>());
@@ -371,9 +376,9 @@ public static String getVenditeTimeFormatter()
 {
 	String timeFormatter = "YYYY-MM-DD HH:mm:ss";
 	
-	 switch(lang)
+	  switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   timeFormatter = config.getit_IT().getVendite().getTimeformatter();
 	   break;
 	   default:  
@@ -387,9 +392,9 @@ public static String getVenditeTimeFormatter()
 public static String getVenditeProdottoTitle()
 {
 	String result = "{TITLE}";
-	 switch(lang)
+	  switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   result = config.getit_IT().getVendite().getProdottoTitolo();
 	   break;
 	   default:  
@@ -402,9 +407,9 @@ public static String getVenditeProdottoTitle()
 public static String getVenditeCurrency() {
 	
 		String result = "&euro;";
-		 switch(lang)
+		  switch(getLang())
 		 {
-		   case "it-IT":  
+		   case "it_IT":  
 			   result = config.getit_IT().getVendite().getCurrency();
 		   break;
 		   default:  
@@ -417,9 +422,9 @@ public static String getVenditeCurrency() {
 public static String getVenditeSeparatorOne() {
 	
 	String result = ",";
-	 switch(lang)
+	  switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   result = config.getit_IT().getVendite().getSeparatorOne();
 	   break;
 	   default:  
@@ -432,9 +437,9 @@ public static String getVenditeSeparatorOne() {
 public static String getVenditeSeparatorTwo() {
 	
 	String result = ".";
-	 switch(lang)
+	  switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   result = config.getit_IT().getVendite().getSeparatorTwo();
 	   break;
 	   default:  
@@ -447,9 +452,9 @@ public static String getVenditeSeparatorTwo() {
 public static int getVenditePrecision() {
 	
 	int result = 2;
-	 switch(lang)
+	  switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   result = config.getit_IT().getVendite().getPrecision();
 	   break;
 	   default:  
@@ -457,15 +462,15 @@ public static int getVenditePrecision() {
 	 }
 	 
 	 return result;
-
 }
 
 public static Login getLogin()
 {
 	Login result = config.getit_IT().getLogin();
-	 switch(lang)
+	
+	 switch(getLang())
 	 {
-	   case "it-IT":  
+	   case "it_IT":  
 		   result = config.getit_IT().getLogin();
 	   break;
 	   default:  

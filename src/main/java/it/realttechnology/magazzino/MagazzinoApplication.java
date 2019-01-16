@@ -1,5 +1,6 @@
 package it.realttechnology.magazzino;
 
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,13 +16,19 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.LocaleResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 
 
+@SuppressWarnings("deprecation")
 @SpringBootApplication
 @EnableAutoConfiguration(exclude =
 {
@@ -29,13 +36,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 })
 @ComponentScan({"it.realttechnology.magazzino.security","it.realttechnology.magazzino.controller","it.realttechnology.magazzino.services","it.realttechnology.magazzino.configuration"})
 @EntityScan("it.realttechnology.magazzino.entity")
-public class MagazzinoApplication
+public class MagazzinoApplication extends WebMvcConfigurerAdapter
 {
     @Value("${server.ssl.enabled}")
 	private boolean sslEnabled;
     @Value("${server.port}")
    	private int port;
-   	
+    //same in mvc controller
+    @Value("${views.datatables.language}")
+	private String viewsDataTablesLanguage;
+    
 	public static void main(String[] args) 
 	{
 		ConfigurableApplicationContext context =  SpringApplication.run(MagazzinoApplication.class, args);
@@ -48,6 +58,23 @@ public class MagazzinoApplication
 		   return bCryptPasswordEncoder;
 	   }
 	   
+	   @Bean
+	   public SessionLocaleResolver localeResolver() {
+	       SessionLocaleResolver slr = new SessionLocaleResolver();
+	       String[] L = viewsDataTablesLanguage.split("_");
+	       slr.setDefaultLocale(new Locale(L[0],L[1]));
+	       return slr;
+	   }
+	   @Bean
+	   public LocaleChangeInterceptor localeChangeInterceptor() {
+	       LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+	       lci.setParamName("lang");
+	       return lci;
+	   }
+	   @Override
+	   public void addInterceptors(InterceptorRegistry registry) {
+	       registry.addInterceptor(localeChangeInterceptor());
+	   }
 	   @Bean
 	   @ConditionalOnProperty(name="server.ssl.enabled",havingValue="true")
 	   public  ServletWebServerFactory servletContainer()

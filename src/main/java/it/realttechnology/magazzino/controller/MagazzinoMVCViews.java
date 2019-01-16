@@ -85,7 +85,7 @@ public class MagazzinoMVCViews
 	static
 	{
 		USE_CONFIG = true;
-		TABLE_LANG = "it-IT";
+		TABLE_LANG = "it_IT";
 		
 	}
 	
@@ -96,6 +96,7 @@ public class MagazzinoMVCViews
 		MVCUtils.setConfig(configurator, USE_CONFIG ? viewsDataTablesLanguage : TABLE_LANG);
 	}
 	
+
 	@GetMapping("/login")
 	//DOES FORWARD ON REQUESTS
 	//when operating with jsp view is possible to interact with the datamodel passing it as parameter and populating it
