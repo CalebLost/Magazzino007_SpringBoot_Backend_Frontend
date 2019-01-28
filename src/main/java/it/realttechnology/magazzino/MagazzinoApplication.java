@@ -20,11 +20,20 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.Local
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+
+//import it.realttechnology.magazzino.security.InMemoryJwtTokenStore;
+import it.realttechnology.magazzino.security.TokenUtils;
 
 
 
@@ -111,5 +120,33 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 		    
 		    return connector;
 		  }
+	   /*
+	    @Bean
+	    public TokenStore tokenStore() throws Exception {
+	        return new InMemoryJwtTokenStore(accessTokenConverter());
+	    }
+	    @Bean
+	    public JwtAccessTokenConverter accessTokenConverter() throws Exception {
+	        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+	        converter.setSigningKey(TokenUtils.SECRET);
+	        converter.afterPropertiesSet();
+	        return converter;
+	    }
 
+	     
+	    @Bean
+	    @Primary
+	    public DefaultTokenServices tokenServices() throws Exception 
+	    {
+	        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+	        defaultTokenServices.setTokenStore(tokenStore());
+	        defaultTokenServices.setSupportRefreshToken(true);
+	        return defaultTokenServices;
+	    }
+	    
+	    @Bean
+	    public RequestContextListener requestContextListener() {
+	        return new RequestContextListener();
+	    }
+	    */
 }
