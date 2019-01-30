@@ -57,6 +57,8 @@ public class GoogleOAuth2Request implements OAuth2Request
 	private boolean isSsl;
 	@Value("${login.view}")
 	private String loginView;
+	@Value("${app.hostname}")
+	private String hostname;
 	
 	final static String querysep     =  "?";
 	final static String namevalsep   =  "&";
@@ -91,7 +93,7 @@ public class GoogleOAuth2Request implements OAuth2Request
 				 req.setClient_secret(oAuthSecret);
 				 req.setGrant_type(TokenUtils.TOKEN_GRANT_CODE);
 				 req.setCode(code);
-				 req.setRedirect_uri((isSsl ? "https" : "http") + "://"+InetAddress.getLoopbackAddress().getHostName()+loginView);
+				 req.setRedirect_uri((isSsl ? "https" : "http") + "://"+hostname+loginView);
 				
 				 HttpEntity<TokenUtils.GoogleTokenRequest> googleTokenRequest = new HttpEntity<>(req);
 				 ResponseEntity<Object> result                                = restTemplate.postForEntity( oAuthUri, googleTokenRequest, Object.class);

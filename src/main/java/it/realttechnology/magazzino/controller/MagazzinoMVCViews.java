@@ -153,7 +153,8 @@ public class MagazzinoMVCViews
 	private String oAuthScope;
 	@Value("${server.ssl.enabled}")
 	private boolean isSsl;
-
+	@Value("${app.hostname}")
+	private String hostname;
 	private static final boolean USE_CONFIG;
 	
 	private static final String TABLE_LANG;
@@ -201,7 +202,7 @@ public class MagazzinoMVCViews
                          "scope="+ this.oAuthScope + "&" +
 	                     "client_id="+ this.oAuthClient + "&" +
 	                     "response_type=code&" +
-	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+InetAddress.getLoopbackAddress().getHostName()+"/views/login";
+	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+hostname+"/views/login";
 	  model.addAttribute("googleLoginUrl", googleUrl);
 	  model.addAttribute("googleLoginText",MVCUtils.getLogin().getGoogleSSO());
 
