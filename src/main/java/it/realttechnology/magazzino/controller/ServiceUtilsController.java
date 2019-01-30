@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import it.realttechnology.magazzino.services.UsersAuthenticationService;
 import it.realttechnology.magazzino.security.*;
 @RestController
-@RequestMapping("/services")
+@RequestMapping("/")
 public class ServiceUtilsController
 {
 
     @Autowired
 	UsersAuthenticationService authenticationService;
-    @PostMapping("/logout")
+    @PostMapping("services/logout")
     @ResponseBody
     public ResponseEntity<LoginResponse> signOut(@RequestHeader HttpHeaders header) 
     {
@@ -33,10 +33,15 @@ public class ServiceUtilsController
     	return responseEntity;
     
     }
-    @PostMapping("/logincheck")
+    @PostMapping("/services/logincheck")
     @ResponseBody
     public void loginCheck(Principal principal) 
     {
     	Logger.getLogger(ServiceUtilsController.class).log(Level.INFO, "USER " + principal.getName());
+    }
+    
+    @RequestMapping(value = "/user")
+    public Principal user(Principal principal) {
+       return principal;
     }
 }

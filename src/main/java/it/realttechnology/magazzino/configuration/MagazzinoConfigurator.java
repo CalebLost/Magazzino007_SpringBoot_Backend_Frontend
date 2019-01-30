@@ -115,12 +115,22 @@ public static class Login
 	private String esci;
 	private String ricordati;
 	private String errore;
+	private String googlesso;
 	public String getErrore() {
 		return errore;
 	}
 	public void setErrore(String errore) {
 		this.errore = errore;
 	}
+	public String getGoogleSSO()
+	{
+		return googlesso;
+	}
+	public void setGoogleSSO(String googlesso)
+	{
+		this.googlesso = googlesso;
+	}
+
 
 }
 public static class Vendite

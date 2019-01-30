@@ -6,12 +6,11 @@
 <style>
 body 
     {
-  
-    font-family: Arial, Helvetica, sans-serif;
+     font-family: Arial, Helvetica, sans-serif;
     }
 form 
 {
-margin: 0 auto; 
+ margin: 0 auto; 
  width:  60%;
  height: 60%;
 }
@@ -80,6 +79,47 @@ span.password {
      width: 100%;
   }
 }
+
+.googlebutton {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px 17px;
+    border: 1px solid #4569e0;
+    border-radius: 0px;
+    background: #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+    background: -moz-linear-gradient(top, #ffffff, #ffffff);
+    background: linear-gradient(to bottom, #ffffff, #ffffff);
+    font: normal normal normal 20px arial;
+    color: #000000;
+    text-decoration: none;
+}
+.googlebutton:hover,
+.googlebutton:focus {
+    color: #000000;
+    text-decoration: none;
+}
+.googlebutton:active {
+    background: #999999;
+    background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#ffffff));
+    background: -moz-linear-gradient(top, #999999, #ffffff);
+    background: linear-gradient(to bottom, #999999, #ffffff);
+}
+.googlebutton:before{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
+    margin: 0 4px -6px -4px;
+    position: relative;
+    top: 0px;
+    left: -4px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEPElEQVRIiZWVa2gcVRTH/+fOY7f7iJtNstY2NNEGjbaIUtSiSKgVJSli1FihxMRWSknb+GgpQVRQJFg/mA+NtmJTtNRqY2mSfjDRCkJFgo0N6kpLjNjGEjXZbDZxyWN3duYeP+xrstk09MDAmZk7/3PO795zhgAILGPRQwdhBH/1Cbe7FFLqbMRDVHxzyN/aZiz3LaUCyHyBwo3PVPLU5E5OJGpgWRWwTMEACASo6jRUtZ8czhNKeUWPv+2IkaMjAQh7gLSJyaYGnzV67X3Mz9WDWWVwUhQAM0AEMKdCEQBNG6ICX1PJl73f27QEALkoQLi+9m45ETrLplEOttVp9/OhICGp0L+r5PTXHfbnqi0awvW1lXJi/FuYZoBAC8WWEM4qaSPkvek75KDOVBBpecllBgcHYRiVbNNjZpDDOURO5wkoykVyOGIci63heLwa8dhWSKlC00eU1aWbio51XstFlK4A1h+X3mQjXomUOgMgUgxR6GtxPvHkIW/j7gX7BOCzcGNdK09H3hMlgeaijlMjudlnKkhceNBv/nnl6mzPKo+cVNJQJRUVP1vS2duzDJzrmgAAjl2pUwNhj7fhd2h3zCexuD2HU+LSVvYN+yoAkIxXMwPkiMP91DDUn8pMY3RdKxYeXwkAu47NrrQk9OUyVxUyPtrhGlPl6Acwh19bT5TZVjg2jv/ofeR4CHmYjkxwX8LCPcsFcKg8BGCdkLN/6cTSDzA4c9iV4aXLT65hTjdbft+U8H94LqYKpDJPS2eDZLEs9Ckjdj2fCLpkFqrwlhsmKRGS5Eu9A8O8PR+edArJnBZ0yyKfGTMepzCEuGU3QGoQxGACLAh0zN218flvDhTnQ+TSaY9Lp+rkheq0rykYSQoTmAFNwej2KkfqFCnuPraitVPswtsz9+NCzKt6tLHXAbyci6h7n6c/t6aGIzO3/T2F8vQABABFYABpDOxe3/WbLIu+OF2FgXgBiAhz5vzex7p31KbWLHk1fzKjTkTRnp6yRAwihtuBbgBCAIC+oS/cMvPw4TEzOTmYGcwspuLRLx7temHvG/1t9ioyuJ7r2+e7+l/kZNzkmuT+JhHpKgXvu1X8APu4fvX8u66BUHAwZqXmkc10RbvsUPSTBLroUPRY3DJWJmSiKiHNbcIq9LnG90DOrs0cgEABPX6q2XMOyPmjPf1Vc+W/s6HzCWkW4wZMQINnahsQ2QSvk9rO7vccyL7Lmuza0n55lTuwWRfaiK0x7E1iayjO+BYbiBYeh3vNmY/vLVNa7BgXnfUzW9qDdxau3eDV3Z8KkMmpDmfOdrqdICcRhkpW+Lc3PRBoeqtuhZkWX4QoN9jW3lcqw7HIzriVqLGkVWGylVmjCTWqCe0Xp6J3lhWs/vzo5nei+fDl/enb7gUAefTSadH/z88FLtVRajE7LbZCRU5f+OBD++fyrbf7/wMDBABx3cdRGwAAAABJRU5ErkJggg==") no-repeat left center transparent;
+    background-size: 100% 100%;
+}
+
 </style>
 </head>
 <body>
@@ -125,6 +165,7 @@ span.password {
     <span class="psw"><a href="${linkforgotpassword}">${labelforgotpassword}</a></span>
     -->
   </div>
+    <center><a href = "${googleLoginUrl}" class="googlebutton">${googleLoginText}</a></center>
     </c:when>    
     <c:otherwise>
       <sec:authorize access="isAuthenticated()"> 

@@ -1,20 +1,28 @@
 package it.realttechnology.magazzino.controller;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+//import org.apache.http.HttpStatus;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.core.ResolvableType;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+//import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,6 +53,55 @@ class IndexController
         return "redirect:views/login";
     }
 }
+@Controller
+class MagazzinoErrorController implements ErrorController 
+{
+    @RequestMapping("/error")
+    public String handleError(HttpServletRequest request,Model model) 
+    {
+          
+    	    Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+    	    
+    	    String errorMsg = "Application Fault... ";
+    	    
+    	    if (status != null)
+    	    {
+    	    	errorMsg+="HTTP ERROR CODE: " + status.toString();
+    	    }
+    	    
+    	    model.addAttribute("errorMsg", errorMsg);
+    	    
+    	    //custom error page if needed
+    	    if (status != null)
+    	    {
+    	        Integer statusCode = Integer.valueOf(status.toString());
+    	        HttpStatus httpStatusCode = HttpStatus.resolve(statusCode);
+    	        
+    	        if(httpStatusCode == null)
+    	        {
+    	          return "error";	
+    	        }
+    	        
+    	        if(httpStatusCode == HttpStatus.NOT_FOUND) 
+    	        {
+    	            return "error";
+    	        }
+    	        
+    	        if(httpStatusCode == HttpStatus.INTERNAL_SERVER_ERROR) 
+    	        {
+    	            return "error";
+    	        }
+    	    }
+    	  
+    	
+        return "error";
+    }
+    
+    @Override
+    public String getErrorPath() {
+        return "/error";
+    }
+}
 
 @Controller
 @RequestMapping("/views")
@@ -66,6 +123,8 @@ public class MagazzinoMVCViews
 	@Autowired
 	ServletContext context; 
 	
+	
+	
 	@Autowired
 	MagazzinoConfigurator configurator;
 	
@@ -78,6 +137,23 @@ public class MagazzinoMVCViews
 	@Value("${views.datatables.language}")
 	private String viewsDataTablesLanguage;
 	
+	
+ 	@Value("${security.oauth2.client.userAuthorizationUri}")
+	private String oAuthUri;
+	@Value("${spring.security.oauth2.client.registration.google.clientSecret}")
+	private String oAuthSecret;
+	@Value("${spring.security.oauth2.client.registration.google.clientId}")
+	private String oAuthClient;
+	
+	@Value("${security.oauth2.client.clientAuthenticationScheme}")
+	private String oAuthClienthScheme;
+	@Value("${security.oauth2.client.authenticationScheme}")
+	private String oAuthScheme;
+	@Value("${security.oauth2.client.scope}")
+	private String oAuthScope;
+	@Value("${server.ssl.enabled}")
+	private boolean isSsl;
+
 	private static final boolean USE_CONFIG;
 	
 	private static final String TABLE_LANG;
@@ -117,6 +193,20 @@ public class MagazzinoMVCViews
 	   model.addAttribute("apk",androidapk);
 	   model.addAttribute("appname",androidappname);
 	   addLoggedOperationsModel(model);
+	   
+	   
+	   
+//OAUTH STUFFS
+	  String googleUrl = this.oAuthUri + "?" +
+                         "scope="+ this.oAuthScope + "&" +
+	                     "client_id="+ this.oAuthClient + "&" +
+	                     "response_type=code&" +
+	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+InetAddress.getLoopbackAddress().getHostName()+"/views/login";
+	  model.addAttribute("googleLoginUrl", googleUrl);
+	  model.addAttribute("googleLoginText",MVCUtils.getLogin().getGoogleSSO());
+
+//END-OAUTHSTUFFS	
+	   
 	   return "login";
 	}
 	

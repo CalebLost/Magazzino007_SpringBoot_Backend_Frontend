@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -22,16 +23,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+//import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+//import org.springframework.security.oauth2.provider.token.TokenStore;
+//import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+//import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import it.realttechnology.magazzino.security.FormAuthenticationInterceptor;
 //import it.realttechnology.magazzino.security.InMemoryJwtTokenStore;
 import it.realttechnology.magazzino.security.TokenUtils;
 
@@ -66,7 +68,10 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 		   BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		   return bCryptPasswordEncoder;
 	   }
-	   
+	   @Autowired
+	   FormAuthenticationInterceptor formAuthenticationInterceptor;
+
+	
 	   @Bean
 	   public SessionLocaleResolver localeResolver() {
 	       SessionLocaleResolver slr = new SessionLocaleResolver();
@@ -83,6 +88,7 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 	   @Override
 	   public void addInterceptors(InterceptorRegistry registry) {
 	       registry.addInterceptor(localeChangeInterceptor());
+	       registry.addInterceptor(formAuthenticationInterceptor);
 	   }
 	   @Bean
 	   @ConditionalOnProperty(name="server.ssl.enabled",havingValue="true")

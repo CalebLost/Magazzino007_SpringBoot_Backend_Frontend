@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+//import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -16,18 +16,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.AccessTokenRequest;
-import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+//import org.springframework.security.oauth2.client.OAuth2ClientContext;
+//import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+//import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
+//import org.springframework.security.oauth2.client.token.AccessTokenRequest;
+//import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
+//import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+//import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import it.realttechnology.magazzino.services.UserDetailsAuthenticationServiceImpl;
+//import it.realttechnology.magazzino.services.UserDetailsAuthenticationServiceImpl;
 import it.realttechnology.magazzino.services.UsersAuthenticationService;
 
 
@@ -35,7 +36,7 @@ import it.realttechnology.magazzino.services.UsersAuthenticationService;
 @Order(2)
 @EnableWebSecurity
 //hybrid approach to get in memory token also from here
-@EnableOAuth2Sso
+//@EnableOAuth2Sso
 //for method secure annotation
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class FormSecurityConfiguration extends WebSecurityConfigurerAdapter
@@ -51,18 +52,19 @@ public class FormSecurityConfiguration extends WebSecurityConfigurerAdapter
 	@Override
 	public void configure(HttpSecurity http) throws Exception
 	{
-		http.requestMatchers().antMatchers("/views/**","/oauth/authorize");
+		http.requestMatchers().antMatchers("/views/**");
 		//https://www.thomasvitale.com/https-spring-boot-ssl-certificate/
 	    //enable access on services or disAble
 		http.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/views/**"))
 	   //http.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("**/views/login"))
 	  .and()
 	  .authorizeRequests()
-	  .antMatchers("/oauth/authorize").permitAll()
 	  .antMatchers("/views/personale/**").hasRole("USER")
+	  .antMatchers("/views/login**").permitAll()
+	  .antMatchers("/views/error**").permitAll()
 	  //the secured annotation on methods specify differents auth stuffs
 	  .anyRequest().authenticated()
-	  .and()
+      .and()
 	  .formLogin()
 	  .successHandler(tokenGeneratorSuccessHandler("/views/login"))
 	  .loginPage("/views/login")

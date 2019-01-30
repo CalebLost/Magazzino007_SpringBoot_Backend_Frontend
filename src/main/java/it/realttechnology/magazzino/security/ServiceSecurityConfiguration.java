@@ -16,10 +16,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+//import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+//import org.springframework.security.oauth2.provider.token.TokenStore;
+//import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+//import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import it.realttechnology.magazzino.services.UsersAuthenticationService;
@@ -27,7 +27,8 @@ import it.realttechnology.magazzino.services.UsersAuthenticationService;
 
 @Configuration
 @Order(1)
-@EnableWebSecurity( debug = true )
+//@EnableWebSecurity( debug = true )
+@EnableWebSecurity
 public class ServiceSecurityConfiguration extends WebSecurityConfigurerAdapter
 {
 @Autowired
