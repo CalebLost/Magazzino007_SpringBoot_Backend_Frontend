@@ -39,15 +39,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import antlr.StringUtils;
 
 @Component
-public class FormAuthenticationInterceptor implements HandlerInterceptor  {
-	
+public class FormAuthenticationInterceptor implements HandlerInterceptor 
+{
 	
 	@Autowired
 	private GoogleOAuth2Request oRequest;
 	
 	public FormAuthenticationInterceptor()
 	{
-	//	oRequest = new GoogleOAuth2Request();
 	}
 	
 	
@@ -63,18 +62,16 @@ public class FormAuthenticationInterceptor implements HandlerInterceptor  {
 		 catch(Exception e)
 		 {
 			 Logger.getLogger(FormAuthenticationInterceptor.class).log(Level.DEBUG, " OAUTH NOT RECOGNIZED : " + e.getMessage());
-	
 		 }
-	
-	  //    System.out.println("Pre Handle method is Calling");
-	      
+
 	      return true;
 	   }
 
 	   @Override
 	   public void postHandle(HttpServletRequest request, HttpServletResponse response, 
-	      Object handler, ModelAndView modelAndView) throws Exception {
-		//   getAuthInfo(request);
+	      Object handler, ModelAndView modelAndView) throws Exception
+	   {
+
 	   }
 	   
 	   @Override
@@ -91,13 +88,7 @@ public class FormAuthenticationInterceptor implements HandlerInterceptor  {
 				 return;
 			 }
 			 	
-			Authentication auth = oRequest.getAuthentication(request);
-					 
-			if(auth!=null)
-			 {
-			 	  //  auth.setAuthenticated(true);
-					SecurityContextHolder.getContext().setAuthentication(auth);
-		     }
+			oRequest.setAuthentication(request);
 
 		}
 	   

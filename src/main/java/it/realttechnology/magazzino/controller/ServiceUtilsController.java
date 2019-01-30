@@ -25,11 +25,18 @@ public class ServiceUtilsController
 	UsersAuthenticationService authenticationService;
     @PostMapping("services/logout")
     @ResponseBody
-    public ResponseEntity<LoginResponse> signOut(@RequestHeader HttpHeaders header) 
+    public ResponseEntity<LoginResponse> signOut(@RequestHeader HttpHeaders header) throws Exception 
     {
-    	authenticationService.logout(header.get(TokenUtils.HEADER_STRING).get(0).replace(TokenUtils.TOKEN_PREFIX, ""));
-    	LoginResponse response = new LoginResponse(header.get(TokenUtils.HEADER_STRING).get(0),false);
+    	String token = TokenUtils.getTokenFromHeaders(header);
+    	
+    	authenticationService.logout(token);
+    	
+    	token = TokenUtils.getFullTokenFromHeaders(header);
+    	
+    	LoginResponse response = new LoginResponse(token,false);
+    	
     	ResponseEntity<LoginResponse> responseEntity = new ResponseEntity(response,HttpStatus.OK);
+    	
     	return responseEntity;
     
     }
@@ -41,7 +48,8 @@ public class ServiceUtilsController
     }
     
     @RequestMapping(value = "/user")
-    public Principal user(Principal principal) {
+    public Principal user(Principal principal)
+    {
        return principal;
     }
 }

@@ -69,8 +69,11 @@ public class TokenDeleterLogoutHandler implements LogoutHandler{
 		
 		final String sessioncookie  = "JSESSIONID";
 		final String remembercookie = "remember-me";
+		final String googlecookie   = "G_AUTHUSER_H";
+		
 		removeCookie(request, response, sessioncookie);
 		removeCookie(request, response, remembercookie);
+		removeCookie(request, response, googlecookie);
 		
 		sec.logout(request, response, authentication);
 		

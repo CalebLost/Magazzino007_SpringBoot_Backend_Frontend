@@ -47,7 +47,7 @@ private UsersAuthenticationService userAuthenticationService;
 	    	 .cors().and().csrf().disable().authorizeRequests()
 	    	
             .antMatchers("/services/prodotti/**").hasRole("USER")
-	    	.antMatchers("/services/vendite/**").hasRole("ADMIN")
+	    	.antMatchers("/services/vendite/**").hasRole("USER")
             .antMatchers("/services/personale/**").hasRole("ADMIN")
             
             .anyRequest().authenticated()

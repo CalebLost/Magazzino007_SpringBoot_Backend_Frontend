@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class TokenUtils
 	public static String SECRET                = "SecretKeyToGenJWTs";
     public static final long EXPIRATION_TIME   = 864_000_000; // 10 days
     public static final String TOKEN_PREFIX    = "Bearer ";
+    public static final String TOKEN_GOOGLE_PREFIX   = "Google ";
     public static final String HEADER_STRING   = "Authorization";
 	public static final String TOKEN_AUTH_PWD  = "TOKEN_PASSWORD";
 	
@@ -38,33 +40,46 @@ public class TokenUtils
 	public static final String TOKEN_ID            = "id_token";
 	public static final String TOKEN_SCOPE         = "scope";
 	
-	static String generateToken(Authentication auth) {
+	public static String generateToken(Authentication auth) {
 		String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
 		return token;
 	}
-	static String generateToken(String credential) {
+	public static String generateToken(String credential) {
 		String token = JWT.create()
                 .withSubject(credential)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
 		return token;
 	}
-	static String getUserFromToken(String header) {
+	public static String getUserFromToken(String header) 
+	{
+		
+		String cleanToken = header.replace(TokenUtils.TOKEN_PREFIX, "");
+		
+		boolean isG = false;
+		
+		if(cleanToken.startsWith(TOKEN_GOOGLE_PREFIX))
+		{
+			cleanToken = cleanToken.replace(TokenUtils.TOKEN_GOOGLE_PREFIX, "");
+			isG = true;
+		}
+		
+		//here the token should be validate by external provider.. but i've generated my token on the top ox external one
+		
 		DecodedJWT token = JWT.require(Algorithm.HMAC512(TokenUtils.SECRET.getBytes()))
 		        .build()
-		        .verify(header.replace(TokenUtils.TOKEN_PREFIX, ""));
+		        .verify(cleanToken);
 		
 		LoggerFactory.getLogger(TokenUtils.class).info("DECODED TOKEN: " + token.getToken());
 		
 		//GET WHAT I NEED FROM THE TOKEN
 		String userName = token.getSubject();
-		return userName;
+		
+		return isG ? TOKEN_GOOGLE_PREFIX + userName : userName;
 	}
-
-	
 
 	    	@JsonIgnoreProperties(ignoreUnknown=true)
 	    	public static class GoogleUserInfo implements Serializable
@@ -188,39 +203,61 @@ public class TokenUtils
 		private String grant_type;
 		private String code;
 		private String client_id;
-		public String getGrant_type() {
+		
+		public String getGrant_type()
+		{
 			return grant_type;
 		}
-		public void setGrant_type(String grant_type) {
+		public void setGrant_type(String grant_type)
+		{
 			this.grant_type = grant_type;
 		}
-		public String getCode() {
+		public String getCode() 
+		{
 			return code;
 		}
-		public void setCode(String code) {
+		public void setCode(String code)
+		{
 			this.code = code;
 		}
-		public String getClient_id() {
+		public String getClient_id()
+		{
 			return client_id;
 		}
-		public void setClient_id(String client_id) {
+		public void setClient_id(String client_id) 
+		{
 			this.client_id = client_id;
 		}
-		public String getClient_secret() {
+		public String getClient_secret()
+		{
 			return client_secret;
 		}
-		public void setClient_secret(String client_secret) {
+		public void setClient_secret(String client_secret) 
+		{
 			this.client_secret = client_secret;
 		}
-		public String getRedirect_uri() {
+		public String getRedirect_uri() 
+		{
 			return redirect_uri;
 		}
-		public void setRedirect_uri(String redirect_uri) {
+		public void setRedirect_uri(String redirect_uri)
+		{
 			this.redirect_uri = redirect_uri;
 		}
 		private String client_secret;
 		private String redirect_uri;
 	}
+
+	public static String getTokenFromHeaders(HttpHeaders header) throws Exception
+	{
+		return header.get(TokenUtils.HEADER_STRING).get(0).replace(TokenUtils.TOKEN_PREFIX, "");
+	}
+	
+	public static String getFullTokenFromHeaders(HttpHeaders header) throws Exception
+	{
+		return header.get(TokenUtils.HEADER_STRING).get(0);
+	}
+	
 
 	
 }

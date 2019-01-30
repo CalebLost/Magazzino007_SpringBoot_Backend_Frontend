@@ -9,4 +9,7 @@ import org.springframework.security.core.Authentication;
 public interface OAuth2Request
 {
 	Authentication getAuthentication(HttpServletRequest request) throws Exception;
+
+	void setAuthentication(HttpServletRequest request) throws Exception;
+
 }

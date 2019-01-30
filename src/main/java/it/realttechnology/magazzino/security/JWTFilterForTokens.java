@@ -66,9 +66,11 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
     {
  
     	  LoggerFactory.getLogger(JWTFilterForTokens.class).info("PROCESSING TOKEN");
+    	  
           try
           {
         	//DECODE THE TOKEN
+            //TODO: check for guests, add to utils const, use email insteead of name
             String userName = TokenUtils.getUserFromToken(header);
             
             LoggerFactory.getLogger(JWTFilterForTokens.class).info(userName);
@@ -76,12 +78,16 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
             if (userName != null)
             {
             	LoggerFactory.getLogger(JWTFilterForTokens.class).info("AUTHENTICATING TOKEN");
-            	// LoggerFactory.getLogger(JWTFilterForTokens.class).info("DECODED TOKEN: " + token.getToken());
             	
+            	Authentication auth = null;
             	
-            	
-            	
-            	Authentication auth = authenticationManager.authenticate
+            	if(userName.startsWith(TokenUtils.TOKEN_GOOGLE_PREFIX))
+            	{
+            		auth = GoogleOAuth2Request.getAuthentication(userName.replace(TokenUtils.TOKEN_GOOGLE_PREFIX, ""));
+            	}
+            	else
+            	{
+            	auth = authenticationManager.authenticate
             	(
                         new UsernamePasswordAuthenticationToken
                         (
@@ -91,7 +97,7 @@ public class JWTFilterForTokens extends  OncePerRequestFilter
                         )
                         
                 );
-               
+            	}
                 //SET THE AUTH 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }

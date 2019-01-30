@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+//import org.apache.commons.codec.binary.Base64;
 //import org.apache.http.HttpStatus;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
@@ -22,6 +24,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -155,6 +158,12 @@ public class MagazzinoMVCViews
 	private boolean isSsl;
 	@Value("${app.hostname}")
 	private String hostname;
+	@Value("${login.view}")
+	private String loginView;
+	@Value("${logout.view}")
+	private String logoutView;
+	@Value("${security.oauth2.client.logoutUri}")
+	private String logoutGoogle;
 	private static final boolean USE_CONFIG;
 	
 	private static final String TABLE_LANG;
@@ -193,17 +202,18 @@ public class MagazzinoMVCViews
 	   model.addAttribute("cancel",  MVCUtils.getLogin().getCancella());	 
 	   model.addAttribute("apk",androidapk);
 	   model.addAttribute("appname",androidappname);
+	
 	   addLoggedOperationsModel(model);
 	   
 	   
 	   
 //OAUTH STUFFS
-	  String googleUrl = this.oAuthUri + "?" +
+	  String googleLoginUrl = this.oAuthUri + "?" +
                          "scope="+ this.oAuthScope + "&" +
 	                     "client_id="+ this.oAuthClient + "&" +
 	                     "response_type=code&" +
-	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+hostname+"/views/login";
-	  model.addAttribute("googleLoginUrl", googleUrl);
+	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+hostname+this.loginView;
+	  model.addAttribute("googleLoginUrl", googleLoginUrl);
 	  model.addAttribute("googleLoginText",MVCUtils.getLogin().getGoogleSSO());
 
 //END-OAUTHSTUFFS	
@@ -214,7 +224,7 @@ public class MagazzinoMVCViews
 	public void addLoggedOperationsModel(Model model)
 	{
 	
-	   model.addAttribute("linklogout","/views/logout");
+	   model.addAttribute("linklogout",logoutView);
 	   model.addAttribute("labellogout",MVCUtils.getLogin().getEsci());
 	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/10/0/3");
 	   model.addAttribute("labelprodotti",MVCUtils.getProdottiTitle());
@@ -222,6 +232,10 @@ public class MagazzinoMVCViews
 	   model.addAttribute("labelvendite",MVCUtils.getVenditeTitle());
 	   model.addAttribute("linkvendite","/views/personale/vendite");
 	   model.addAttribute("labelclienti",MVCUtils.getClientiTitle());
+	   model.addAttribute("googleClientID",this.oAuthClient);
+	   model.addAttribute("googleClientScope",this.oAuthScope);
+	   model.addAttribute("googlelogouturl",logoutGoogle);
+       model.addAttribute("hosturl", (isSsl ? "https" : "http") + "://"+hostname);
 	}
 	//VENDITE BEGIN//
 	@GetMapping("/personale/vendite")
@@ -293,10 +307,21 @@ public class MagazzinoMVCViews
 	 	 return "venditeView";	  
 	 }
 	 
-	 private void addVenditeModelGridLabels(Principal principal, Model model) 
+	 private void addVenditeModelGridLabels(Principal principal, Model model)
 	 {
 		 String userName  = principal.getName();
-		 String authtoken = userAuthenticationService.getUserToken(userName);
+		 String authtoken = "";
+		 
+		 try
+		 {
+		   authtoken = userAuthenticationService.getUserToken(userName);
+		 }
+		 catch(Exception e)
+		 {
+		   authtoken = TokenUtils.generateToken(userName);
+		   authtoken = TokenUtils.TOKEN_GOOGLE_PREFIX + authtoken;
+		 }
+		 
          model.addAttribute("venditeGridLabels", MVCUtils.getVenditeGridLabels());
 		 model.addAttribute("venditeHeaders", MVCUtils.getVenditeHeaders());
 		 model.addAttribute("venditeserviceauthtokenheader",TokenUtils.HEADER_STRING);

@@ -1,6 +1,9 @@
 package it.realttechnology.magazzino.security;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +16,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.Logger;
+import org.jboss.logging.Logger.Level;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
@@ -64,9 +70,23 @@ public class GoogleOAuth2Request implements OAuth2Request
 	final static String namevalsep   =  "&";
 	final static String datasep      =  "=";
 	
+	private static List<SimpleGrantedAuthority> simpleGrantedAuthorities;
+	
 	private java.util.Map<String, String> parameters;
 
-				
+	static 
+	{
+		simpleGrantedAuthorities = new ArrayList<>();
+		simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_GOOGLE_USER"));
+		
+	}
+	
+	public GoogleOAuth2Request()
+	{
+		
+		parameters = new HashMap<String,String>();
+	}
 		public GoogleOAuth2Request(  HttpServletRequest request) throws Exception
 		{
 			parameters = new HashMap<String,String>();
@@ -109,15 +129,22 @@ public class GoogleOAuth2Request implements OAuth2Request
 			}
 		}
 
-		public GoogleOAuth2Request()
-		{
-			parameters = new HashMap<String,String>();
-		}
+	
 		
 		private void getQS(HttpServletRequest request) 
 		{
 
-			String queryString  = request.getQueryString();
+			String queryString = request.getQueryString();
+			
+			try 
+			{
+				queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8.toString());
+			}
+			catch (UnsupportedEncodingException e) 
+			{
+				 Logger.getLogger(GoogleOAuth2Request.class).log(Level.DEBUG, "URL DECODE EXCEPTION: " + e.getMessage());
+			}
+			
 			String[] entries = queryString.split(namevalsep);
 			
 			
@@ -137,19 +164,49 @@ public class GoogleOAuth2Request implements OAuth2Request
         	{
         		return null;
         	}
-        	
-        	List<GrantedAuthority> authorities = new ArrayList<>();
-        	authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        	    
             RestTemplate restTemplate = new RestTemplate();
+            
             GoogleUserInfo userName = restTemplate.getForObject(this.oAuthUser+this.querysep+TokenUtils.TOKEN_NAME+this.datasep+this.parameters.get(TokenUtils.TOKEN_NAME), TokenUtils.GoogleUserInfo.class);
         	
             if(userName==null)
             {
             	return null;
             }
-            User user = new User(userName.getName(), "GOOGLE_TOKEN", authorities);
-        	Authentication authentication = new UsernamePasswordAuthenticationToken(user, "GOOGLE_TOKEN",authorities);
+            
+            String namemail = userName.getName() +":"+ userName.getEmail();
+            
+	        Authentication authentication = getAuthentication(namemail);
 	
         	return authentication;
 		}
+     
+		public static Authentication getAuthentication(String username)
+		{
+			List<GrantedAuthority> authorities = new ArrayList<>();
+        	
+        	for(SimpleGrantedAuthority sga : simpleGrantedAuthorities)
+        	{
+        	 authorities.add(sga);
+        	 authorities.add(sga);
+        	}
+        	
+            User user = new User(username,TokenUtils.TOKEN_GOOGLE_PREFIX, authorities);
+            
+        	Authentication authentication = new UsernamePasswordAuthenticationToken(user, TokenUtils.TOKEN_GOOGLE_PREFIX,authorities);
+			return authentication;
+		}
+		
+        @Override
+		  public void setAuthentication(HttpServletRequest request) throws Exception
+		  {
+			Authentication auth = this.getAuthentication(request);
+			 
+			if(auth!=null)
+			 {
+					SecurityContextHolder.getContext().setAuthentication(auth);
+		     }
+			
+		}
+	
 	}
