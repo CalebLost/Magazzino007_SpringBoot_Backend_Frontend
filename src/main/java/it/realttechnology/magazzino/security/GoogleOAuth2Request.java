@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import org.springframework.security.core.userdetails.User;
 //import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import it.realttechnology.magazzino.configuration.Oauth2Configurator;
 
 //import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 //import com.google.api.client.http.javanet.NetHttpTransport;
@@ -44,47 +48,36 @@ import it.realttechnology.magazzino.security.TokenUtils.GoogleUserInfo;
 @Component
 public class GoogleOAuth2Request implements OAuth2Request
 	{
-	@Value("${security.oauth2.client.accessTokenUri}")
-	private String oAuthUri;
-	@Value("${security.oauth2.resource.userInfoUri}")
-	private String oAuthUser;
-	@Value("${spring.security.oauth2.client.registration.google.clientSecret}")
-	private String oAuthSecret;
-	@Value("${spring.security.oauth2.client.registration.google.clientId}")
-	private String oAuthClient;
-	
-	@Value("${security.oauth2.client.clientAuthenticationScheme}")
-	private String oAuthClienthScheme;
-	@Value("${security.oauth2.client.authenticationScheme}")
-	private String oAuthScheme;
-	@Value("${security.oauth2.client.scope}")
-	private String oAuthScope;
-	@Value("${server.ssl.enabled}")
-	private boolean isSsl;
-	@Value("${login.view}")
-	private String loginView;
-	@Value("${app.hostname}")
-	private String hostname;
-	
-	final static String querysep     =  "?";
-	final static String namevalsep   =  "&";
-	final static String datasep      =  "=";
+
+	@Autowired
+	private Oauth2Configurator oauth2configurator;
 	
 	private static List<SimpleGrantedAuthority> simpleGrantedAuthorities;
 	
 	private java.util.Map<String, String> parameters;
+	
 
 	static 
 	{
 		simpleGrantedAuthorities = new ArrayList<>();
-		simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_GOOGLE_USER"));
+	}
+	
+	@PostConstruct
+	public void loadRoles()
+	{
+		simpleGrantedAuthorities.clear();
 		
+		String[] vRoles =	this.oauth2configurator.getRoles();
+		
+		for(String role : vRoles)
+		{
+			simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role));
+			simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role));
+		}
 	}
 	
 	public GoogleOAuth2Request()
-	{
-		
+	{	
 		parameters = new HashMap<String,String>();
 	}
 		public GoogleOAuth2Request(  HttpServletRequest request) throws Exception
@@ -95,7 +88,7 @@ public class GoogleOAuth2Request implements OAuth2Request
 		
 		public String getLoginView()
 		{
-			return loginView;
+			return this.oauth2configurator.getLoginView();
 		}
 		private void update(HttpServletRequest request)
 		{
@@ -109,14 +102,14 @@ public class GoogleOAuth2Request implements OAuth2Request
 			{
 				 RestTemplate restTemplate         = new RestTemplate();
 				 TokenUtils.GoogleTokenRequest req = new TokenUtils.GoogleTokenRequest();
-				 req.setClient_id(oAuthClient);
-				 req.setClient_secret(oAuthSecret);
+				 req.setClient_id(this.oauth2configurator.getoAuthClient());
+				 req.setClient_secret(this.oauth2configurator.getoAuthSecret());
 				 req.setGrant_type(TokenUtils.TOKEN_GRANT_CODE);
 				 req.setCode(code);
-				 req.setRedirect_uri((isSsl ? "https" : "http") + "://"+hostname+loginView);
+				 req.setRedirect_uri((this.oauth2configurator.isSsl() || this.oauth2configurator.isRedirectssl() ? Oauth2Configurator.HTTPS : Oauth2Configurator.HTTP) +this.oauth2configurator.getHostname()+this.oauth2configurator.getLoginView());
 				
 				 HttpEntity<TokenUtils.GoogleTokenRequest> googleTokenRequest = new HttpEntity<>(req);
-				 ResponseEntity<Object> result                                = restTemplate.postForEntity( oAuthUri, googleTokenRequest, Object.class);
+				 ResponseEntity<Object> result                                = restTemplate.postForEntity(this.oauth2configurator.getoAuthTokenUri(), googleTokenRequest, Object.class);
 				 Map<String,Object> resp                                      = (Map<String,Object>)(result.getBody());
 				 
 				 parameters.clear();
@@ -145,12 +138,11 @@ public class GoogleOAuth2Request implements OAuth2Request
 				 Logger.getLogger(GoogleOAuth2Request.class).log(Level.DEBUG, "URL DECODE EXCEPTION: " + e.getMessage());
 			}
 			
-			String[] entries = queryString.split(namevalsep);
-			
-			
+			String[] entries = queryString.split(Oauth2Configurator.namevalsep);
+				
 			for(String entry : entries)
 			{
-				String[] nameValue = entry.split(datasep);
+				String[] nameValue = entry.split(Oauth2Configurator.datasep);
                 parameters.put(nameValue[0],nameValue[1]);
 			}
 		
@@ -167,14 +159,14 @@ public class GoogleOAuth2Request implements OAuth2Request
         	    
             RestTemplate restTemplate = new RestTemplate();
             
-            GoogleUserInfo userName = restTemplate.getForObject(this.oAuthUser+this.querysep+TokenUtils.TOKEN_NAME+this.datasep+this.parameters.get(TokenUtils.TOKEN_NAME), TokenUtils.GoogleUserInfo.class);
+            GoogleUserInfo userName = restTemplate.getForObject(this.oauth2configurator.getoAuthUser()+Oauth2Configurator.querysep+TokenUtils.TOKEN_NAME+Oauth2Configurator.datasep+this.parameters.get(TokenUtils.TOKEN_NAME), TokenUtils.GoogleUserInfo.class);
         	
             if(userName==null)
             {
             	return null;
             }
             
-            String namemail = userName.getName() +":"+ userName.getEmail();
+            String namemail = "<DIV><SPAN>"+userName.getName() + Oauth2Configurator.usersep + userName.getEmail() + " </SPAN>" + ((userName.getPicture() != null && userName.getPicture().length() > 3) ? "<img  style='vertical-align:middle; border-radius: 50%;' src='"+userName.getPicture()+"' width='30px' heigth='30px'>" : "")+"</DIV>" ;
             
 	        Authentication authentication = getAuthentication(namemail);
 	

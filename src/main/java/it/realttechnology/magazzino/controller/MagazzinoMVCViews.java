@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import it.realttechnology.magazzino.configuration.MagazzinoConfigurator;
+import it.realttechnology.magazzino.configuration.Oauth2Configurator;
 import it.realttechnology.magazzino.entity.ClientiEntity;
 import it.realttechnology.magazzino.entity.ClientiEntityForCreate;
 import it.realttechnology.magazzino.entity.ClientiEntityForUpdate;
@@ -141,33 +142,12 @@ public class MagazzinoMVCViews
 	private String viewsDataTablesLanguage;
 	
 	
- 	@Value("${security.oauth2.client.userAuthorizationUri}")
-	private String oAuthUri;
-	@Value("${spring.security.oauth2.client.registration.google.clientSecret}")
-	private String oAuthSecret;
-	@Value("${spring.security.oauth2.client.registration.google.clientId}")
-	private String oAuthClient;
+	@Autowired
+	private Oauth2Configurator oauth2configurator;
 	
-	@Value("${security.oauth2.client.clientAuthenticationScheme}")
-	private String oAuthClienthScheme;
-	@Value("${security.oauth2.client.authenticationScheme}")
-	private String oAuthScheme;
-	@Value("${security.oauth2.client.scope}")
-	private String oAuthScope;
-	@Value("${server.ssl.enabled}")
-	private boolean isSsl;
-	@Value("${app.hostname}")
-	private String hostname;
-	@Value("${login.view}")
-	private String loginView;
-	@Value("${logout.view}")
-	private String logoutView;
-	@Value("${security.oauth2.client.logoutUri}")
-	private String logoutGoogle;
 	private static final boolean USE_CONFIG;
-	
 	private static final String TABLE_LANG;
-	
+
 	static
 	{
 		USE_CONFIG = true;
@@ -205,17 +185,10 @@ public class MagazzinoMVCViews
 	
 	   addLoggedOperationsModel(model);
 	   
-	   
-	   
+	  
 //OAUTH STUFFS
-	  String googleLoginUrl = this.oAuthUri + "?" +
-                         "scope="+ this.oAuthScope + "&" +
-	                     "client_id="+ this.oAuthClient + "&" +
-	                     "response_type=code&" +
-	                     "redirect_uri=" + (isSsl ? "https" : "http") + "://"+hostname+this.loginView;
-	  model.addAttribute("googleLoginUrl", googleLoginUrl);
+	  model.addAttribute("googleLoginUrl", oauth2configurator.getLoginUrl());
 	  model.addAttribute("googleLoginText",MVCUtils.getLogin().getGoogleSSO());
-
 //END-OAUTHSTUFFS	
 	   
 	   return "login";
@@ -224,7 +197,7 @@ public class MagazzinoMVCViews
 	public void addLoggedOperationsModel(Model model)
 	{
 	
-	   model.addAttribute("linklogout",logoutView);
+	   model.addAttribute("linklogout",oauth2configurator.getLogoutView());
 	   model.addAttribute("labellogout",MVCUtils.getLogin().getEsci());
 	   model.addAttribute("linkprodotti","/views/personale/prodotti/p/0/10/0/3");
 	   model.addAttribute("labelprodotti",MVCUtils.getProdottiTitle());
@@ -232,10 +205,8 @@ public class MagazzinoMVCViews
 	   model.addAttribute("labelvendite",MVCUtils.getVenditeTitle());
 	   model.addAttribute("linkvendite","/views/personale/vendite");
 	   model.addAttribute("labelclienti",MVCUtils.getClientiTitle());
-	   model.addAttribute("googleClientID",this.oAuthClient);
-	   model.addAttribute("googleClientScope",this.oAuthScope);
-	   model.addAttribute("googlelogouturl",logoutGoogle);
-       model.addAttribute("hosturl", (isSsl ? "https" : "http") + "://"+hostname);
+	   model.addAttribute("googlelogouturl",oauth2configurator.getLogoutUrl());
+       model.addAttribute("hosturl", oauth2configurator.getHostBaseUrl());
 	}
 	//VENDITE BEGIN//
 	@GetMapping("/personale/vendite")
