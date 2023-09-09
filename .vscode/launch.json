@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-MagazzinoApplication<magazzino>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "it.realttechnology.magazzino.MagazzinoApplication",
+            "projectName": "magazzino",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -2,7 +2,7 @@ package it.realttechnology.magazzino.repository;
 
 import java.util.Optional;
 
-import javax.persistence.Column;
+//import javax.persistence.Column;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

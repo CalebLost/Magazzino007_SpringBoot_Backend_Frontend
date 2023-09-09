@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+//import javax.persistence.EntityManager;
+//import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import it.realttechnology.magazzino.entity.ClientiEntity;
 import it.realttechnology.magazzino.entity.PersonaleEntity;
 import it.realttechnology.magazzino.entity.PersonaleEntityForCreate;
 import it.realttechnology.magazzino.entity.PersonaleEntityForUpdate;

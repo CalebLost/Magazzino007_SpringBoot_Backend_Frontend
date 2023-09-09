@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.realttechnology.magazzino.entity.ClientiEntity;
 import it.realttechnology.magazzino.entity.ProdottiEntity;
 import it.realttechnology.magazzino.repository.ProdottiRepository;
+import javax.persistence.PersistenceContexts;
 
 @Service
 public class ProdottiServiceDAOImpl implements ProdottiServiceDAO

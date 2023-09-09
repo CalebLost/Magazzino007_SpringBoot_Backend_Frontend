@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import it.realttechnology.magazzino.entity.PersonaleEntity;
 import it.realttechnology.magazzino.entity.RolesEntity;
 import it.realttechnology.magazzino.security.TokenUtils;
@@ -33,6 +36,8 @@ public class UserDetailsAuthenticationServiceImpl implements UserDetailsService
 
     @Autowired
     UsersAuthenticationServiceImpl personaleAuthentication;
+    @PersistenceContext
+	private EntityManager entityManager;
   
     private final String TOKEN_PWD;
     public UserDetailsAuthenticationServiceImpl

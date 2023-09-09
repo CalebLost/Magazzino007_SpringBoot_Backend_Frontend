@@ -64,8 +64,9 @@ class MagazzinoErrorController implements ErrorController
     public String handleError(HttpServletRequest request,Model model) 
     {
           
-    	    Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-    	    
+    	  //  Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+		   Object status = request.getAttribute("javax.servlet.error.status_code");
+    	   
     	    String errorMsg = "Application Fault... ";
     	    
     	    if (status != null)
@@ -104,7 +105,7 @@ class MagazzinoErrorController implements ErrorController
     @Override
     public String getErrorPath() {
         return "/error";
-    }
+   }
 }
 
 @Controller

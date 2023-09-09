@@ -3,8 +3,8 @@ package it.realttechnology.magazzino.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+//import javax.persistence.EntityManager;
+//import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

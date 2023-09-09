@@ -29,7 +29,7 @@ public class Oauth2Configurator
 	private String loginView;
 	@Value("${logout.view}")
 	private String logoutView;
-	@Value("${app.hostname}")
+	@Value("${app.hostname}:${server.port}")
 	private String hostname;
 	@Value("${security.oauth2.client.roles}")
 	private String googleroles;

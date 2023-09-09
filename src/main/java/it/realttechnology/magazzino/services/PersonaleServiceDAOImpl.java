@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import it.realttechnology.magazzino.entity.PersonaleEntity;
 import it.realttechnology.magazzino.entity.ProdottiEntity;
 import it.realttechnology.magazzino.repository.PersonaleRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Service
 public class PersonaleServiceDAOImpl implements PersonaleServiceDAO 
@@ -18,7 +20,8 @@ public class PersonaleServiceDAOImpl implements PersonaleServiceDAO
 	PersonaleRepository personaleRepository;
 	@Autowired
 	 private BCryptPasswordEncoder bCryptPasswordEncoder;
-	    
+	    @PersistenceContext
+	private EntityManager entityManager;
 	  
 		
 

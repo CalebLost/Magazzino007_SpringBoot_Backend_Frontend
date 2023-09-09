@@ -17,7 +17,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.LocaleResolver;
+//import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties.LocaleResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,15 +28,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 //import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+//import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import it.realttechnology.magazzino.security.FormAuthenticationInterceptor;
 //import it.realttechnology.magazzino.security.InMemoryJwtTokenStore;
 import it.realttechnology.magazzino.security.TokenUtils;
-
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 
 
 @SuppressWarnings("deprecation")
@@ -48,11 +52,14 @@ import it.realttechnology.magazzino.security.TokenUtils;
 @ComponentScan({"it.realttechnology.magazzino.security","it.realttechnology.magazzino.controller","it.realttechnology.magazzino.services","it.realttechnology.magazzino.configuration"})
 @EntityScan("it.realttechnology.magazzino.entity")
 public class MagazzinoApplication extends WebMvcConfigurerAdapter
+//public class MagazzinoApplication implements WebMvcConfigurer
 {
     @Value("${server.ssl.enabled}")
 	private boolean sslEnabled;
     @Value("${server.port}")
    	private int port;
+    @Value("${server.portoptional}")
+   	private int portoptional;
     //same in mvc controller
     @Value("${views.datatables.language}")
 	private String viewsDataTablesLanguage;
@@ -61,11 +68,21 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 	{
 		ConfigurableApplicationContext context =  SpringApplication.run(MagazzinoApplication.class, args);
 	}
-	
+/*	  @Bean
+	  public ViewResolver viewResolver() {
+	    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+	    viewResolver.setViewClass(JstlView.class);
+	    viewResolver.setPrefix("/WEB-INF/views/");
+	    viewResolver.setSuffix(".jsp");
+	    return viewResolver;
+	  }
+*/
 	   @Bean
 	   public BCryptPasswordEncoder passwordEncoder() 
 	   {
 		   BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		   //String result = bCryptPasswordEncoder.encode("TEST");
+		  
 		   return bCryptPasswordEncoder;
 	   }
 	   @Autowired
@@ -119,7 +136,7 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 		   //HTTP port
 		    Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");
 		    connector.setScheme("http");
-		    connector.setPort(8080);
+		    connector.setPort(portoptional);
 		    connector.setSecure(false);
 
 		    connector.setRedirectPort(this.port);

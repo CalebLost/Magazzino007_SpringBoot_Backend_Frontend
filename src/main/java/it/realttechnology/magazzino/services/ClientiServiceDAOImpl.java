@@ -3,8 +3,8 @@ package it.realttechnology.magazzino.services;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+//import javax.persistence.EntityManager;
+//import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.realttechnology.magazzino.entity.ClientiEntity;
 import it.realttechnology.magazzino.entity.ProdottiEntity;
 import it.realttechnology.magazzino.repository.ClientiRepository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Service
 public class ClientiServiceDAOImpl implements ClientiServiceDAO
@@ -21,8 +23,8 @@ public class ClientiServiceDAOImpl implements ClientiServiceDAO
 
 	@Autowired
 	ClientiRepository clientiRepository;
-	//@PersistenceContext
-	//private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	
 	@Override

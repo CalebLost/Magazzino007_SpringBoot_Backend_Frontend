@@ -3,6 +3,9 @@ package it.realttechnology.magazzino.services;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +19,8 @@ public class UsersAuthenticationServiceImpl implements UsersAuthenticationServic
 	
 	@Autowired
 	PersonaleServiceDAOImpl usersDAOServiceImpl;
-
+@PersistenceContext
+	private EntityManager entityManager;
 	@Override
 	public PersonaleEntity loginUsername(String userName) throws UsernameNotFoundException
 	{
