@@ -29,6 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -77,6 +78,13 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 	    return viewResolver;
 	  }
 */
+@Override
+public void addCorsMappings(CorsRegistry registry) {
+
+	registry.addMapping("/views/personale/**")
+			.allowedOrigins("*")
+			.allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+}
 	   @Bean
 	   public BCryptPasswordEncoder passwordEncoder() 
 	   {
@@ -102,6 +110,7 @@ public class MagazzinoApplication extends WebMvcConfigurerAdapter
 	       lci.setParamName("lang");
 	       return lci;
 	   }
+
 	   @Override
 	   public void addInterceptors(InterceptorRegistry registry) {
 	       registry.addInterceptor(localeChangeInterceptor());

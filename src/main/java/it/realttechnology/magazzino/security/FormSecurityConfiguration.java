@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 //import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
 
 //import it.realttechnology.magazzino.services.UserDetailsAuthenticationServiceImpl;
 import it.realttechnology.magazzino.services.UsersAuthenticationService;

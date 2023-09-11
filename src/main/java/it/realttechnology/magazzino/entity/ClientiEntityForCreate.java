@@ -14,7 +14,16 @@ public class ClientiEntityForCreate
   @NotNull
   @Size(min=5,max=255)
   private String indirizzo;
-  
+  private int id;
+  private String method_;
+  public String getMethod_()
+  {
+   return method_;
+  }
+  public void setMethod_(String method_)
+  {
+   this.method_ = method_;
+  }
 public String getNome() {
 	return nome;
 }
@@ -37,5 +46,10 @@ public void setIndirizzo(String indirizzo)
 {
 	this.indirizzo = indirizzo;
 }
-
+public int getId() {
+	return id;
+}
+public void setId(int id) {
+	this.id = id;
+}
 }

@@ -73,7 +73,41 @@ $(document).ready(function() {
           </TH>
           </c:forEach>
         </TR></thead>
-        <tbody>
+        <tbody><TR><TD></TD><TD></TD><Td></Td><td></td><Td>
+          
+          
+          <DIV class="buttonsTable"><DIV class="buttonsRow">
+            <c:forEach items="${clientiCommands}" var="comando">
+            <c:choose>
+          <c:when test="${comando.type == 'post'}">
+            <div class ="buttonsColumn">
+          <sec:authorize access="hasRole('ADMIN')">
+            <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonBlue"><c:out value="${comando.nome}"></c:out></a>
+             <form:errors path="*" />
+             <form:form action="${comandourl}" onSubmit="return true;" method="${comando.type}" modelAttribute="cliente" >
+            <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
+          <div>
+         <a href="#close" title="Close" class="close">X</a>
+           <h2><c:out value="${comando.nome}"></c:out></h2>
+              <TABLE>
+           <c:forEach items="${clienteFields}" var="clienteField"  varStatus="cStatus">
+        
+             <c:if test="${clienteField.name != 'id'}">
+               <TR><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><form:input path="${clienteField.name}" /></TD></TR>
+            </c:if>
+           </c:forEach>
+           </TABLE>
+               <p><BUTTON type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
+           </div>
+            </div>
+           </form:form>
+           </sec:authorize>
+          </div>
+         </c:when> 
+         </c:choose>
+            </c:forEach>
+        </div> </div>
+          </Td></TR>
   <c:forEach items="${clienti}" var="cliente"  varStatus="pStatus">
   <TR>
      <TD><c:out value="${cliente.id}"></c:out></TD>
@@ -93,55 +127,33 @@ $(document).ready(function() {
       <c:when test="${comando.type == 'delete'}">
        <sec:authorize access="hasRole('ADMIN')">
         <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonRed"><c:out value="${comando.nome}"></c:out></a>
-         <form:form action="${comandourl}${cliente.id}" onSubmit="return true;" method="${comando.type}" modelAttribute="cliente" >
-        <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
+         <form id="cliente" action="<c:out value="${comandourl}${cliente.id}"></c:out>" onSubmit="return true;" method="post" >
+          <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
+          <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
 	    <div>
 		 <a href="#close" title="Close" class="close">X</a>
 		   <h2><c:out value="${comando.nome}"></c:out></h2>
 		    <TABLE>
 		    <c:forEach items="${clienteFields}" var="clienteField"  varStatus="cStatus">
 		    <TR><c:choose>
-		       <c:when test="${clienteField.name == 'id'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.id}"></c:out>" ><c:out value="${cliente.id}"></c:out></label></TD></c:when>
-		       <c:when test="${clienteField.name == 'nome'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.nome}"></c:out>" ><c:out value="${cliente.nome}"></c:out></label></TD></c:when>
-		       <c:when test="${clienteField.name == 'telefono'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.telefono}"></c:out>" ><c:out value="${cliente.telefono}"></c:out></label></TD></c:when>
-		       <c:when test="${clienteField.name == 'indirizzo'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.indirizzo}"></c:out>" ><c:out value="${cliente.indirizzo}"></c:out></label></TD></c:when>
+		       <c:when test="${clienteField.name == 'id'}"><TD><input type="hidden"  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.id}"></c:out>"/><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label name="<c:out value="${clienteField.name}" ></c:out>"><c:out value="${cliente.id}"></c:out></label></TD></c:when>
+		       <c:when test="${clienteField.name == 'nome'}"><TD><input type="hidden"  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.nome}"></c:out>"/><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>"><c:out value="${cliente.nome}"></c:out></label></TD></c:when>
+		       <c:when test="${clienteField.name == 'telefono'}"><TD><input type="hidden"  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.telefono}"></c:out>"/><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>"><c:out value="${cliente.telefono}"></c:out></label></TD></c:when>
+		       <c:when test="${clienteField.name == 'indirizzo'}"><TD><input type="hidden"  name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.indirizzo}"></c:out>"/><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><label  name="<c:out value="${clienteField.name}" ></c:out>"><c:out value="${cliente.indirizzo}"></c:out></label></TD></c:when>
 		       </c:choose></TR>
 		   </c:forEach>
 		   </TABLE>
-           <p><BUTTON type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
+           <p><button type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></button><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
 	     </div>
         </div>
-       </form:form>
+       </form>
         </sec:authorize>
-      </c:when>
-      <c:when test="${comando.type == 'post'}">
-      <sec:authorize access="hasRole('ADMIN')">
-        <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonBlue"><c:out value="${comando.nome}"></c:out></a>
-         <form:errors path="*" />
-         <form:form action="${comandourl}" onSubmit="return true;" method="${comando.type}" modelAttribute="cliente" >
-        <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
-	    <div>
-		 <a href="#close" title="Close" class="close">X</a>
-		   <h2><c:out value="${comando.nome}"></c:out></h2>
-		      <TABLE>
-		   <c:forEach items="${clienteFields}" var="clienteField"  varStatus="cStatus">
-		
-		     <c:if test="${clienteField.name != 'id'}">
-		       <TR><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><form:input path="${clienteField.name}" /></TD></TR>
-		    </c:if>
-		   </c:forEach>
-		   </TABLE>
-           <p><BUTTON type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
-	     </div>
-        </div>
-       </form:form>
-       </sec:authorize>
       </c:when>
       <c:when test="${comando.type == 'put'}">
         <sec:authorize access="hasRole('ADMIN')">
        <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonYellow"><c:out value="${comando.nome}"></c:out></a>
        <form id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post">
-       <input type="hidden" name="_method" value="<c:out value="${comando.type}"></c:out>"/>  
+       <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
         <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
 	    <div>
 		 <a href="#close" title="Close" class="close">X</a>
@@ -156,7 +168,7 @@ $(document).ready(function() {
 		       </c:choose></TR>
 		   </c:forEach>
 		   </TABLE>
-           <p><BUTTON type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></BUTTON><BUTTON type="reset" class="hrefButtonGreen">RESET</BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
+           <p><button type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></button><BUTTON type="reset" class="hrefButtonGreen">RESET</BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
 	     </div>
         </div>
        </form>

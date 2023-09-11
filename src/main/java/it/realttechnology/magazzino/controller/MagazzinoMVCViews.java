@@ -29,6 +29,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -319,7 +320,7 @@ public class MagazzinoMVCViews
 
 
 	 
-	 
+	 /* 
 	 @GetMapping(value = "/personale/clienti/{id}")
 	 public String  findClienteWithoutVendite(Model model,@PathVariable("id") int id) 
 	 {   
@@ -340,7 +341,21 @@ public class MagazzinoMVCViews
 		 addLoggedOperationsModel(model);
 	 	 return "clientiView";	  
 	 }
-	 
+	 */
+	
+     @Secured("ROLE_ADMIN")
+	 @RequestMapping(value = "/personale/clienti/{id}", method = RequestMethod.POST)
+	 public String deleteClientePost(Model model,@PathVariable("id") int id,@Valid @ModelAttribute("cliente") ClientiEntityForUpdate cliente,BindingResult result) 
+	 {  
+		 
+		 if(!cliente.getMethod_().equals("delete"))
+		 {
+            return "error";
+		 }
+
+	 	 return deleteCliente(model, id, cliente, result);	  
+	 }
+
 	 @Secured("ROLE_ADMIN")
 	 @RequestMapping(value = "/personale/clienti/{id}", method = RequestMethod.DELETE)
 	 public String deleteCliente(Model model,@PathVariable("id") int id,@Valid @ModelAttribute("cliente") ClientiEntityForUpdate cliente,BindingResult result) 
@@ -368,15 +383,25 @@ public class MagazzinoMVCViews
 	 @RequestMapping(value = "/personale/clienti", method = RequestMethod.POST)
 	 public String postCliente(Model model,@Valid @ModelAttribute("cliente") ClientiEntityForCreate cliente,BindingResult result) 
 	 {  	 
-	
-		 //check for errors, i can put validators also
+	    
+		 if(cliente.getMethod_().equals("put"))
+		 {
+			//Logger.getLogger("postClienti").log(Level.INFO, "validation - failed create - should be  update");
+		    ClientiEntityForUpdate up = new ClientiEntityForUpdate();
+			up.setId(cliente.getId());
+			up.setIndirizzo(cliente.getIndirizzo());
+			up.setNome(cliente.getNome());
+			up.setTelefono(cliente.getTelefono());
+			return putCliente(model, up, result);
+		}
+
+
+         //check for errors, i can put validators also
 		 if(result.hasErrors())
 		 {
-			 Logger.getLogger("postClienti").log(Level.INFO, "validation - failed create " + result.getErrorCount());
 			 model.addAttribute("cliente", cliente);
 			 return "error";
 		 }
-		 
 		 //create a new real entity based on the dto one
 		 ClientiEntity clienteEntity = new ClientiEntity();
 		 clienteEntity.setIndirizzo(cliente.getIndirizzo());
@@ -384,9 +409,8 @@ public class MagazzinoMVCViews
 		 clienteEntity.setTelefono(cliente.getTelefono());
 		 
 		 if(!clientiService.create(clienteEntity).isPresent())
-		 {
-			 
-			 Logger.getLogger("postClienti").log(Level.INFO, "cllientiservice - failed create");
+		 { 
+			 model.addAttribute("cliente",cliente);
 			 return "error";
 		 }
 		 
@@ -400,7 +424,6 @@ public class MagazzinoMVCViews
 		 //check for errors, i can put validators also
 		 if(result.hasErrors())
 		 {
-			 Logger.getLogger("putClienti").log(Level.INFO, "validation - failed update " + result.getErrorCount());
 			 model.addAttribute("cliente", cliente);
 			 return "error";
 		 }
@@ -412,7 +435,7 @@ public class MagazzinoMVCViews
 		 Optional<ClientiEntity> clienteEntityOp = clientiService.findById(cliente.getId());
 		 if(!clienteEntityOp.isPresent())
 		 {
-			 Logger.getLogger("putClienti").log(Level.INFO, "clientiservice - failed findById "+cliente.getId());
+			
 			 model.addAttribute("cliente", cliente);
 			 return "error";
 		 }
@@ -425,8 +448,7 @@ public class MagazzinoMVCViews
 		 
 		 if(!clientiService.update(clienteEntity).isPresent())
 		 {
-			 
-			 Logger.getLogger("putClienti").log(Level.INFO, "clientiservice - failed update");
+			 model.addAttribute("cliente", cliente);
 			 return "error";
 		 }
 		 
