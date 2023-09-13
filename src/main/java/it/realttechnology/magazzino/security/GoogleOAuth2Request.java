@@ -106,7 +106,7 @@ public class GoogleOAuth2Request implements OAuth2Request
 				 req.setClient_secret(this.oauth2configurator.getoAuthSecret());
 				 req.setGrant_type(TokenUtils.TOKEN_GRANT_CODE);
 				 req.setCode(code);
-				 req.setRedirect_uri((this.oauth2configurator.isSsl() || this.oauth2configurator.isRedirectssl() ? Oauth2Configurator.HTTPS : Oauth2Configurator.HTTP) +this.oauth2configurator.getHostname()+this.oauth2configurator.getLoginView());
+				 req.setRedirect_uri((this.oauth2configurator.isSsl() || this.oauth2configurator.isRedirectssl() ? Oauth2Configurator.HTTPS : Oauth2Configurator.HTTP) +this.oauth2configurator.getHostnameConditionalPort()+this.oauth2configurator.getLoginView());
 				
 				 HttpEntity<TokenUtils.GoogleTokenRequest> googleTokenRequest = new HttpEntity<>(req);
 				 ResponseEntity<Object> result                                = restTemplate.postForEntity(this.oauth2configurator.getoAuthTokenUri(), googleTokenRequest, Object.class);

@@ -320,17 +320,13 @@ public class MagazzinoMVCViews
 
 
 	 
-	 /* 
+	 
 	 @GetMapping(value = "/personale/clienti/{id}")
 	 public String  findClienteWithoutVendite(Model model,@PathVariable("id") int id) 
 	 {   
-		 ClientiEntityForCreate clienteu = new ClientiEntityForCreate(); 
-         model.addAttribute("cliente",clienteu);
-         model.addAttribute("clienteFields", MVCUtils.getClassProperties("cliente")); 
-         model.addAttribute("clientiGridLabels", MVCUtils.getClientiGridLabels());
-		 model.addAttribute("clientiTitle", MVCUtils.getClientiTitle());
-		 model.addAttribute("clientiCommands", MVCUtils.getClientiCommands());
-		 model.addAttribute("clientiHeaders",  MVCUtils.getClientiHeaders());
+		 ClientiEntityForUpdate clientedummy = new ClientiEntityForUpdate(); 
+         addClientiModels(model,clientedummy);
+		 
 		 List<ClientiEntity> clienti = new ArrayList<ClientiEntity>();
 		 Optional<ClientiEntity> cliente = clientiService.findById(id);
 		 if(cliente.isPresent())
@@ -341,7 +337,7 @@ public class MagazzinoMVCViews
 		 addLoggedOperationsModel(model);
 	 	 return "clientiView";	  
 	 }
-	 */
+	 
 	
      @Secured("ROLE_ADMIN")
 	 @RequestMapping(value = "/personale/clienti/{id}", method = RequestMethod.POST)
@@ -407,14 +403,14 @@ public class MagazzinoMVCViews
 		 clienteEntity.setIndirizzo(cliente.getIndirizzo());
 		 clienteEntity.setNome(cliente.getNome());
 		 clienteEntity.setTelefono(cliente.getTelefono());
-		 
-		 if(!clientiService.create(clienteEntity).isPresent())
+		 Optional<ClientiEntity> createdEntity = null;
+		 if(!(createdEntity = clientiService.create(clienteEntity)).isPresent())
 		 { 
 			 model.addAttribute("cliente",cliente);
 			 return "error";
 		 }
 		 
-	 	 return "redirect:/views/personale/clienti";	  
+	 	 return "redirect:/views/personale/clienti/"+createdEntity.get().getId();	  
 	 }
 	 @Secured("ROLE_ADMIN")
 	 @RequestMapping(value = "/personale/clienti", method = RequestMethod.PUT)
@@ -446,13 +442,13 @@ public class MagazzinoMVCViews
     	 if(cliente.getIndirizzo() != null) clienteEntity.setIndirizzo(cliente.getIndirizzo());
     	 if(cliente.getTelefono()  != null) clienteEntity.setTelefono(cliente.getTelefono());
 		 
-		 if(!clientiService.update(clienteEntity).isPresent())
+		 if(!((clienteEntityOp = clientiService.update(clienteEntity)).isPresent()))
 		 {
 			 model.addAttribute("cliente", cliente);
 			 return "error";
 		 }
 		 
-	 	 return "redirect:/views/personale/clienti";	  
+	 	 return "redirect:/views/personale/clienti/" + clienteEntityOp.get().getId() ;	  
 	 }
 	 
 	 private void addClientiModels(Model model, ClientiEntityForUpdate cliente) {

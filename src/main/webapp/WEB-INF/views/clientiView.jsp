@@ -84,23 +84,26 @@ $(document).ready(function() {
           <sec:authorize access="hasRole('ADMIN')">
             <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonBlue"><c:out value="${comando.nome}"></c:out></a>
              <form:errors path="*" />
-             <form:form action="${comandourl}" onSubmit="return true;" method="${comando.type}" modelAttribute="cliente" >
-            <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
+             <form id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post" >
+              <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
+              <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
           <div>
          <a href="#close" title="Close" class="close">X</a>
            <h2><c:out value="${comando.nome}"></c:out></h2>
-              <TABLE>
-           <c:forEach items="${clienteFields}" var="clienteField"  varStatus="cStatus">
-        
-             <c:if test="${clienteField.name != 'id'}">
-               <TR><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><form:input path="${clienteField.name}" /></TD></TR>
-            </c:if>
+           <TABLE>
+            <c:forEach items="${clienteFields}" var="clienteField"  varStatus="cStatus">
+            <TR><c:choose>
+             
+               <c:when test="${clienteField.name == 'nome'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><input type="text" name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.nome}"></c:out>" /></TD></c:when>
+               <c:when test="${clienteField.name == 'telefono'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><input type="text" name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.telefono}"></c:out>" /></TD></c:when>
+               <c:when test="${clienteField.name == 'indirizzo'}"><TD><label><c:out value="${clienteField.value}" ></c:out></label></TD><TD><input type="text" name="<c:out value="${clienteField.name}" ></c:out>" id="<c:out value="${clienteField.name}" ></c:out>" value="<c:out value="${cliente.indirizzo}"></c:out>" /></TD></c:when>
+               </c:choose></TR>
            </c:forEach>
            </TABLE>
                <p><BUTTON type="submit" class="hrefButtonGreen"><c:out value="${comando.conferma}"></c:out></BUTTON><A HREF="#close" class="hrefButtonGreen"><c:out value="${comando.annulla}"></c:out></A></p>
            </div>
             </div>
-           </form:form>
+           </form>
            </sec:authorize>
           </div>
          </c:when> 

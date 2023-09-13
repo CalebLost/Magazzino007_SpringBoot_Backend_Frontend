@@ -29,8 +29,14 @@ public class Oauth2Configurator
 	private String loginView;
 	@Value("${logout.view}")
 	private String logoutView;
-	@Value("${app.hostname}:${server.port}")
+	@Value("${app.hostname}")
 	private String hostname;
+    @Value("${server.port}")
+	private int hostPort;
+	@Value("${app.uselogoutport}")
+	private boolean useLogoutPort;
+
+
 	@Value("${security.oauth2.client.roles}")
 	private String googleroles;
 	@Value("${security.oauth2.client.redirectssl}")
@@ -148,10 +154,13 @@ public class Oauth2Configurator
 	}
 	public String getHostBaseUrl() 
 	{
-		return (isSsl || redirectssl ? HTTPS : HTTP) + hostname;
+		return (isSsl || redirectssl ? HTTPS : HTTP) + getHostnameConditionalPort();
 	}
 	public String getLogoutView() 
 	{
 		return logoutView;
+	}
+	public String getHostnameConditionalPort() {
+		return hostname + (useLogoutPort ? (":" + hostPort) : "");
 	}
 }
