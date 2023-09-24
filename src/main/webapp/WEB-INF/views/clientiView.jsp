@@ -4,7 +4,8 @@
 <html>
 <head>
 <title>Clienti List - Spring Boot Web Application Example</title>
-	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" 
+  content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <%@ taglib prefix = "c"    uri = "http://java.sun.com/jsp/jstl/core" %>
@@ -84,7 +85,7 @@ $(document).ready(function() {
           <sec:authorize access="hasRole('ADMIN')">
             <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonBlue"><c:out value="${comando.nome}"></c:out></a>
              <form:errors path="*" />
-             <form id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post" >
+             <form accept-charset="utf-8" id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post" >
               <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
               <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
           <div>
@@ -130,7 +131,7 @@ $(document).ready(function() {
       <c:when test="${comando.type == 'delete'}">
        <sec:authorize access="hasRole('ADMIN')">
         <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonRed"><c:out value="${comando.nome}"></c:out></a>
-         <form id="cliente" action="<c:out value="${comandourl}${cliente.id}"></c:out>" onSubmit="return true;" method="post" >
+         <form accept-charset="utf-8" id="cliente" action="<c:out value="${comandourl}${cliente.id}"></c:out>" onSubmit="return true;" method="post" >
           <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
           <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
 	    <div>
@@ -155,7 +156,7 @@ $(document).ready(function() {
       <c:when test="${comando.type == 'put'}">
         <sec:authorize access="hasRole('ADMIN')">
        <a href="#<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="hrefButtonYellow"><c:out value="${comando.nome}"></c:out></a>
-       <form id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post">
+       <form accept-charset="utf-8" id="cliente" action="<c:out value="${comandourl}"></c:out>" onSubmit="return true;" method="post">
        <input type="hidden" name="method_" id="method_" value="<c:out value="${comando.type}"></c:out>"/>  
         <div id="<c:out value="${comando.type}"></c:out>Modal<c:out value="${cliente.id}"></c:out>" class="modalDialog">
 	    <div>
